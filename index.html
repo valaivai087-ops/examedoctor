@@ -1,0 +1,2601 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Medical Learning OS｜醫學系國考講義 APP</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d8dee8;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --nav: #102033;
+      --nav2: #1b3551;
+      --teal: #0f8b8d;
+      --green: #2f855a;
+      --red: #c2410c;
+      --blue: #2563eb;
+      --gold: #b7791f;
+      --shadow: 0 14px 32px rgba(20, 32, 48, .09);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button {
+      border: 0;
+      cursor: pointer;
+      color: inherit;
+      background: transparent;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 20px 16px;
+      color: #edf6ff;
+      background: linear-gradient(180deg, var(--nav), var(--nav2));
+    }
+
+    .brand {
+      padding: 8px 10px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .brand strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+    .brand span {
+      display: block;
+      margin-top: 8px;
+      color: #b8c7d8;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .nav-group { padding: 16px 0 4px; }
+    .nav-label {
+      padding: 8px 10px;
+      color: #9fb2c7;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 10px;
+      border-radius: var(--radius);
+      color: #eaf2fb;
+      text-align: left;
+    }
+    .nav-btn svg { width: 18px; height: 18px; flex: 0 0 18px; }
+    .nav-btn.active, .nav-btn:hover { background: rgba(255,255,255,.12); }
+
+    main {
+      min-width: 0;
+      padding: 24px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin: -24px -24px 20px;
+      padding: 16px 24px;
+      background: rgba(246, 248, 251, .92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+    .mobile-menu { display: none; }
+    .search {
+      width: min(520px, 100%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+    }
+    .save-state {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+    .hero-copy {
+      padding: 26px;
+      color: #f7fbff;
+      background: #12344d;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      color: #9ee5dc;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      margin-bottom: 12px;
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1.08;
+    }
+    h2 { margin-bottom: 14px; font-size: 24px; }
+    h3 { margin-bottom: 10px; font-size: 17px; }
+    p { line-height: 1.75; }
+
+    .hero-copy p {
+      max-width: 760px;
+      color: #d8e7f4;
+      font-size: 16px;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .primary, .secondary, .tiny-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 9px 13px;
+      border-radius: var(--radius);
+      font-weight: 800;
+    }
+    .primary { color: #fff; background: var(--teal); }
+    .secondary { color: #dff5ff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); }
+    .tiny-btn { min-height: 34px; padding: 7px 10px; background: #eef4fb; color: var(--ink); }
+    .tiny-btn.active { color: #fff; background: var(--teal); }
+    .danger { color: #fff; background: var(--red); }
+
+    .visual {
+      min-height: 360px;
+      padding: 18px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .body-map {
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+    }
+    .body-map .node { cursor: pointer; transition: transform .2s, opacity .2s; transform-box: fill-box; transform-origin: center; }
+    .body-map .node:hover { transform: scale(1.05); opacity: .9; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 18px rgba(20, 32, 48, .04);
+    }
+    .card {
+      min-height: 142px;
+      padding: 16px;
+    }
+    .card button { text-align: left; }
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-weight: 900;
+    }
+    .card-title svg { width: 22px; height: 22px; color: var(--teal); }
+    .card p, .muted { color: var(--muted); font-size: 14px; }
+    .metric {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .metric strong { font-size: 30px; line-height: 1; }
+    .metric span { color: var(--muted); font-size: 13px; }
+
+    .section {
+      margin-top: 20px;
+      padding: 20px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .tabs, .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tab, .chip {
+      min-height: 34px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #edf2f7;
+      color: #344054;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .tab.active, .chip.active { background: var(--teal); color: #fff; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, .55fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .chapter-layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .chapter-menu {
+      position: sticky;
+      top: 82px;
+      padding: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .chapter-page-btn {
+      width: 100%;
+      min-height: 36px;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      text-align: left;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .chapter-page-btn.active { background: #e7f7f6; color: #096466; }
+    .chapter-content {
+      min-height: 520px;
+      padding: 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .lecture-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .lecture-card {
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .ordered-flow {
+      display: grid;
+      gap: 10px;
+      margin: 12px 0 0;
+    }
+    .flow-step {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      min-height: 42px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--teal);
+      font-weight: 900;
+    }
+
+    .mindmap {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .mindmap span {
+      min-height: 58px;
+      display: grid;
+      place-items: center;
+      padding: 10px;
+      border-radius: var(--radius);
+      background: #eef6ff;
+      border: 1px solid #cfe2ff;
+      text-align: center;
+      font-weight: 800;
+    }
+    .mindmap span:nth-child(1) { background: #e7f7f6; border-color: #bfe5e3; }
+    .mindmap span:nth-child(5) { background: #fff7e6; border-color: #f4d59b; }
+
+    .question {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+    .option {
+      width: 100%;
+      min-height: 44px;
+      margin-top: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      text-align: left;
+      background: #f8fafc;
+    }
+    .option.correct { border-color: var(--green); background: #edfdf5; }
+    .option.wrong { border-color: var(--red); background: #fff4ef; }
+    .explain {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8fafc;
+      border-left: 4px solid var(--teal);
+      line-height: 1.7;
+    }
+    .explain.show { display: block; }
+
+    .task-row, .anki-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .task-row:last-child, .anki-row:last-child { border-bottom: 0; }
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--teal);
+    }
+    .progress {
+      height: 10px;
+      overflow: hidden;
+      background: #e7edf5;
+      border-radius: 999px;
+    }
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--teal);
+      transition: width .2s;
+    }
+
+    .stars {
+      display: grid;
+      gap: 10px;
+    }
+    .star-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      align-items: center;
+      gap: 12px;
+    }
+    .star-set { display: flex; gap: 4px; }
+    .star {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: #e9eef5;
+      color: #98a2b3;
+      font-weight: 900;
+    }
+    .star.on { background: #fff1be; color: #9a6700; }
+
+    .case-ladder {
+      display: grid;
+      gap: 8px;
+    }
+    .case-ladder label {
+      display: grid;
+      gap: 6px;
+      font-weight: 800;
+      color: #344054;
+    }
+    .case-ladder textarea {
+      min-height: 62px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #edf2f7;
+      color: #475467;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .empty {
+      padding: 18px;
+      border: 1px dashed #b9c4d4;
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: #fbfdff;
+      text-align: center;
+    }
+
+    .kg {
+      width: 100%;
+      min-height: 420px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    @media (max-width: 1100px) {
+      .shell { grid-template-columns: 1fr; }
+      aside {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 20;
+        width: 280px;
+        transform: translateX(-102%);
+        transition: transform .2s;
+      }
+      aside.open { transform: translateX(0); }
+      .mobile-menu { display: inline-flex; }
+      .hero, .two-col, .chapter-layout { grid-template-columns: 1fr; }
+      .chapter-menu { position: static; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      main { padding: 16px; }
+      .topbar { margin: -16px -16px 16px; padding: 12px 16px; flex-wrap: wrap; }
+      .save-state { width: 100%; }
+      .hero-copy, .visual, .section, .chapter-content { padding: 16px; }
+      .grid, .three-col, .lecture-grid, .mindmap { grid-template-columns: 1fr; }
+      .star-row { grid-template-columns: 1fr; }
+      h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside id="sidebar">
+      <div class="brand">
+        <strong>Medical Learning OS</strong>
+        <span>無 AI Token 版｜預建內容、點選學習、國考推理、長期記憶。</span>
+      </div>
+      <div class="nav-group" id="nav"></div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <button class="tiny-btn mobile-menu" id="menuBtn" aria-label="開啟選單">☰</button>
+        <label class="search" aria-label="搜尋">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          <input id="searchInput" placeholder="搜尋章節、疾病、藥物、英文、國考陷阱">
+        </label>
+        <div class="save-state">
+          <span id="saveDot">●</span>
+          <span id="saveText">本機進度已啟用</span>
+        </div>
+      </div>
+
+      <section class="view active" id="home"></section>
+      <section class="view" id="body"></section>
+      <section class="view" id="lecture"></section>
+      <section class="view" id="disease"></section>
+      <section class="view" id="pharm"></section>
+      <section class="view" id="pbl"></section>
+      <section class="view" id="anki"></section>
+      <section class="view" id="english"></section>
+      <section class="view" id="wrong"></section>
+      <section class="view" id="tasks"></section>
+    </main>
+  </div>
+
+  <script>
+    const icons = {
+      calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>',
+      body: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"></circle><path d="M12 8v13M7 12h10M8 21l4-8 4 8"></path></svg>',
+      book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M4 4v15.5A2.5 2.5 0 0 1 6.5 22H20V6a2 2 0 0 0-2-2H6.5A2.5 2.5 0 0 0 4 6.5"></path></svg>',
+      disease: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"></path><circle cx="12" cy="12" r="8"></circle></svg>',
+      pill: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 0 0-7-7l-10 10a4.95 4.95 0 0 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path></svg>',
+      pbl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12c1 1 1 2 1 3h6c0-1 0-2 1-3a7 7 0 0 0-4-12Z"></path></svg>',
+      cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="14" height="14" rx="2"></rect><path d="M7 3h12a2 2 0 0 1 2 2v12"></path></svg>',
+      english: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 8 6 6M4 14l6-6 2-3"></path><path d="M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"></path></svg>',
+      wrong: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.5 2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.5a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4M12 17h.01"></path></svg>',
+      check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"></path></svg>'
+    };
+
+    const navItems = [
+      ['home', '今天讀什麼', icons.calendar],
+      ['body', '人體系統地圖', icons.body],
+      ['lecture', '國考講義', icons.book],
+      ['disease', '疾病地圖', icons.disease],
+      ['pharm', '藥理地圖', icons.pill],
+      ['pbl', 'PBL推理', icons.pbl],
+      ['anki', 'Anki複習', icons.cards],
+      ['english', '醫學英文', icons.english],
+      ['wrong', '今日錯題', icons.wrong],
+      ['tasks', '內容呈現', icons.book]
+    ];
+
+    const chapters = [
+      {
+        id: 'cardio',
+        system: '心血管系統',
+        one: '心血管系統是一套以壓力差推動血流、把氧氣與養分送到全身的循環網路。',
+        goals: ['理解心臟幫浦、血管阻力、血壓調控', '把正常生理連到休克、心衰竭與高血壓', '能用病例線索推回位置、機制與處置'],
+        location: '胸腔縱膈、全身動脈與靜脈、微血管床',
+        concepts: ['前負荷', '後負荷', '收縮力', '心輸出量', '周邊阻力', '血壓回饋'],
+        flow: ['靜脈回流', '右心', '肺循環', '左心', '主動脈', '組織灌流', '靜脈回流'],
+        causality: ['失血使前負荷下降', '心輸出量下降', '交感神經活化', '周邊血管收縮', '皮膚濕冷與少尿'],
+        diseases: ['心衰竭', '高血壓', '急性冠心症'],
+        drugs: ['ACE inhibitor', 'Beta blocker', 'Loop diuretic'],
+        english: ['preload', 'afterload', 'contractility', 'perfusion', 'ischemia'],
+        exam: ['血壓 = 心輸出量 x 周邊阻力', '休克先判斷容量、幫浦、阻力、阻塞', '心衰竭題目常考肺水腫、BNP、利尿劑'],
+        traps: ['把低血壓一律當脫水', '忽略心率太快會降低舒張充填', '把水腫只當腎臟問題'],
+        case: '68歲男性胸悶、冒冷汗、血壓下降、肺部濕囉音，心電圖顯示ST elevation。',
+        memory: '心臟題先問四件事：回來多少、推出多難、打得多強、路上多窄。',
+        graph: ['人體', '心臟', '心肌細胞', '鈣離子', '心衰竭', '利尿劑', 'BNP', 'ACE inhibitor']
+      },
+      {
+        id: 'resp',
+        system: '呼吸系統',
+        one: '呼吸系統用通氣與擴散維持氧氣進入、二氧化碳排出，核心是氣體交換。',
+        goals: ['分清通氣、灌流、擴散三種問題', '能解讀低氧與二氧化碳滯留', '把哮喘、COPD、肺炎放回機制'],
+        location: '鼻腔、氣管、支氣管、肺泡、肺微血管',
+        concepts: ['通氣', '灌流', 'V/Q mismatch', '擴散障礙', '順應性', '呼吸功'],
+        flow: ['吸氣', '肺泡通氣', '肺泡微血管交換', '氧合血回左心', '組織利用', 'CO2回肺排出'],
+        causality: ['支氣管收縮', '氣流阻力上升', '呼氣困難', '空氣滯留', '喘鳴與低氧'],
+        diseases: ['氣喘', 'COPD', '肺炎'],
+        drugs: ['SABA', 'Inhaled corticosteroid', 'Antibiotics'],
+        english: ['ventilation', 'perfusion', 'wheezing', 'hypoxemia', 'compliance'],
+        exam: ['低氧先想V/Q mismatch最常見', '氣喘是可逆性阻塞', 'COPD常見CO2 retention與桶狀胸'],
+        traps: ['看到喘就只給氧，忘了阻塞機制', '把肺炎低氧當純粹換氣不足', '忽略二氧化碳代表通氣'],
+        case: '22歲女性夜間喘鳴、咳嗽，運動後加劇，吸入支氣管擴張劑後改善。',
+        memory: 'O2看交換，CO2看通氣；喘鳴先想小氣道變窄。',
+        graph: ['人體', '肺泡', '第二型肺泡細胞', '表面張力', '氣喘', 'SABA', 'ABG', 'ICS']
+      },
+      {
+        id: 'renal',
+        system: '腎臟與水電解質',
+        one: '腎臟把血液變成可調整的尿液，維持容量、電解質、酸鹼與毒素排除。',
+        goals: ['理解過濾、再吸收、分泌、排泄', '把腎元位置連到藥物與檢驗值', '能用BUN/Cr、Na、K推理病因'],
+        location: '後腹腔腎臟、腎小球、近端小管、亨利氏環、遠端小管、集尿管',
+        concepts: ['GFR', 'RAAS', '鈉水平衡', '鉀調控', '酸鹼調節', '滲透壓'],
+        flow: ['腎小球過濾', '近端再吸收', '亨利氏環濃縮', '遠端調整', '集尿管受ADH影響', '尿液排出'],
+        causality: ['腎灌流下降', 'RAAS活化', '鈉水滯留', '血壓上升', '水腫惡化'],
+        diseases: ['急性腎損傷', '慢性腎病', '腎病症候群'],
+        drugs: ['Loop diuretic', 'Thiazide', 'ACE inhibitor'],
+        english: ['filtration', 'reabsorption', 'secretion', 'creatinine', 'osmolarity'],
+        exam: ['腎前性AKI常有BUN/Cr上升', 'Loop作用在厚上行支', 'ACEi可降低出球小動脈收縮'],
+        traps: ['只背利尿劑名字，不背作用位置', '看到水腫就補白蛋白而不問病因', '忽略高鉀心律風險'],
+        case: '74歲男性腹瀉後少尿、BUN/Cr上升、尿鈉低，血壓偏低。',
+        memory: '腎題先定位：球、近端、環、遠端、集尿管。',
+        graph: ['人體', '腎元', '主細胞', '鈉鉀幫浦', 'AKI', 'Loop diuretic', 'Creatinine', 'ACE inhibitor']
+      }
+    ];
+
+    const knowledge = [
+      {
+        name: '心輸出量',
+        plain: '每分鐘心臟真正打出去的血量。',
+        location: '左心室到主動脈',
+        function: '決定全身灌流與血壓基礎。',
+        mechanism: '心輸出量 = 心率 x 每搏輸出量，受前負荷、後負荷、收縮力影響。',
+        why: '休克、心衰竭、失血都會直接改變它。',
+        exam: '低血壓要拆成CO或SVR問題。',
+        trap: '只看血壓，不看心率、尿量與末梢灌流。',
+        case: '心肌梗塞後低血壓合併肺水腫，代表幫浦失效。',
+        memory: 'HR x SV = CO',
+        chapter: 'cardio'
+      },
+      {
+        name: 'V/Q mismatch',
+        plain: '空氣與血流沒有在同一個地方好好碰面。',
+        location: '肺泡與肺微血管',
+        function: '影響氧氣進血液的效率。',
+        mechanism: '通氣或灌流任一側下降，都會讓氧合變差。',
+        why: '是低氧血症最常見機制之一。',
+        exam: '肺炎、肺栓塞、COPD都可用V/Q思考。',
+        trap: '把所有低氧都當低通氣。',
+        case: '肺炎肺泡充滿滲出液，有血流但通氣差。',
+        memory: 'V是風，Q是血；風血不合就低氧。',
+        chapter: 'resp'
+      },
+      {
+        name: 'GFR',
+        plain: '腎小球每分鐘過濾血漿的能力。',
+        location: '腎小球',
+        function: '反映腎臟清除廢物與調節體液的能力。',
+        mechanism: '由入球與出球小動脈張力、腎灌流壓、腎小球膜狀態決定。',
+        why: '用來判斷AKI與CKD嚴重度。',
+        exam: 'Creatinine上升通常代表GFR下降。',
+        trap: '只看Cr數字，忽略肌肉量與變化速度。',
+        case: '老人脫水後Cr快速上升，補液後改善。',
+        memory: 'GFR是腎臟的流量表。',
+        chapter: 'renal'
+      }
+    ];
+
+    const diseases = [
+      { name: '心衰竭', normal: '心臟能維持足夠輸出量', cause: '缺血、高血壓、瓣膜病', mechanism: '收縮或舒張功能下降', symptoms: '喘、水腫、疲倦', tests: 'BNP、Echo、CXR', treatment: '利尿、ACEi/ARB、Beta blocker、SGLT2i', exam: '肺水腫和BNP是常見線索', chapter: 'cardio' },
+      { name: '氣喘', normal: '小氣道可維持順暢氣流', cause: '過敏、運動、感染', mechanism: '可逆性支氣管收縮與發炎', symptoms: '喘鳴、胸悶、夜咳', tests: '肺功能可逆性、PEF變異', treatment: 'SABA急救、ICS控制', exam: '可逆性阻塞是關鍵', chapter: 'resp' },
+      { name: '急性腎損傷', normal: '腎臟穩定過濾與排泄', cause: '低灌流、腎毒性、阻塞', mechanism: 'GFR快速下降', symptoms: '少尿、水腫、尿毒症', tests: 'Cr、BUN、尿鈉、尿沉渣', treatment: '找病因、停腎毒藥、必要時透析', exam: '先分腎前、腎性、腎後', chapter: 'renal' }
+    ];
+
+    const drugs = [
+      { name: 'ACE inhibitor', site: 'RAAS與出球小動脈', mechanism: '抑制Ang II生成，降低後負荷與醛固酮', adverse: '咳嗽、高鉀、腎功能惡化、血管水腫', contraindication: '懷孕、雙側腎動脈狹窄、高鉀', use: '高血壓、心衰竭、蛋白尿腎病', trap: '開始用藥後要追蹤Cr與K', chapter: 'cardio' },
+      { name: 'SABA', site: '支氣管平滑肌β2受體', mechanism: '放鬆支氣管平滑肌，快速改善阻塞', adverse: '心悸、手抖、低鉀', contraindication: '嚴重心律不整需謹慎', use: '氣喘急性症狀緩解', trap: '只靠SABA代表控制不良，需抗發炎治療', chapter: 'resp' },
+      { name: 'Loop diuretic', site: '亨利氏環厚上行支', mechanism: '抑制Na-K-2Cl cotransporter，增加排鈉排水', adverse: '低鉀、低鎂、耳毒性、脫水', contraindication: '嚴重電解質失衡需先處理', use: '肺水腫、心衰竭水腫、腎病水腫', trap: '作用位置決定副作用與國考考法', chapter: 'renal' }
+    ];
+
+    const questions = [
+      {
+        type: '基礎題',
+        stem: '血壓最直接可拆成下列哪一組關係？',
+        options: ['心輸出量 x 周邊阻力', '肺活量 x 血紅素', 'GFR x 尿量', '白蛋白 x 滲透壓'],
+        answer: 0,
+        why: '平均動脈壓可用心輸出量與全身血管阻力理解。',
+        wrong: '其他選項可影響氧合、腎功能或水腫，但不是血壓主公式。',
+        avoid: '看到血壓題先拆CO與SVR。',
+        related: '心血管系統',
+        disease: '休克、心衰竭',
+        drug: 'Beta blocker、Vasopressor'
+      },
+      {
+        type: '病例題',
+        stem: '年輕女性夜間喘鳴，吸入支氣管擴張劑後改善，最符合哪個核心機制？',
+        options: ['不可逆肺泡破壞', '可逆性支氣管收縮', '肺血管阻塞', '心肌收縮力下降'],
+        answer: 1,
+        why: '氣喘核心是可逆性氣道阻塞與慢性發炎。',
+        wrong: '不可逆肺泡破壞偏COPD，肺血管阻塞偏PE，心肌收縮力下降偏心衰竭。',
+        avoid: '喘要先分氣道、肺泡、血管、心臟。',
+        related: '呼吸系統',
+        disease: '氣喘',
+        drug: 'SABA、ICS'
+      },
+      {
+        type: '推理題',
+        stem: '腹瀉後少尿、BUN/Cr上升、尿鈉低，最可能的AKI類型是？',
+        options: ['腎前性', '急性腎小管壞死', '腎後阻塞', '腎絲球腎炎'],
+        answer: 0,
+        why: '腹瀉造成容量不足，腎臟保鈉保水，BUN/Cr常上升。',
+        wrong: 'ATN尿鈉常較高；腎後需阻塞線索；腎炎常有血尿蛋白尿。',
+        avoid: 'AKI先問灌流、腎實質、出口。',
+        related: '腎臟與水電解質',
+        disease: '急性腎損傷',
+        drug: '避免NSAIDs、調整ACEi'
+      }
+    ];
+
+    const english = {
+      roots: ['cardio 心臟', 'angio 血管', 'pneumo 肺', 'nephro 腎', 'hepato 肝', 'gastro 胃', 'neuro 神經', 'derm 皮膚', 'hemo 血液', 'osteo 骨'],
+      words: ['perfusion 灌流', 'ischemia 缺血', 'dyspnea 呼吸困難', 'edema 水腫', 'filtration 過濾', 'secretion 分泌', 'inflammation 發炎', 'contraindication 禁忌', 'adverse effect 副作用', 'prognosis 預後', 'diagnosis 診斷', 'treatment 治療', 'symptom 症狀', 'sign 徵象', 'mechanism 機制', 'pathophysiology 病理生理', 'compliance 順應性', 'resistance 阻力', 'contractility 收縮力', 'osmolarity 滲透壓'],
+      phrases: ['shortness of breath', 'chest tightness', 'acute kidney injury', 'heart failure', 'drug of choice'],
+      sentences: ['The patient presents with acute chest pain and diaphoresis.', 'A low GFR suggests impaired renal filtration.', 'Wheezing improves after bronchodilator use.', 'BNP is often elevated in heart failure.', 'Treatment should target the underlying mechanism.']
+    };
+
+    const dailyTasks = ['一章閱讀', '一頁總整理', '一張心智圖', '一張流程圖', '一個疾病', '一個藥物', '一個檢驗值', '二十張Anki', '十題國考', '一題病例'];
+    const abilities = ['人體地圖能力', '疾病推理能力', '藥理能力', '病理能力', '檢驗判讀能力', '醫學英文能力', '病例分析能力', 'PBL能力', '國考能力'];
+    const chapterPages = ['一句話理解本章', '本章目標', '人體位置圖', '核心概念圖', '流程圖', '因果圖', '疾病地圖', '藥理地圖', '醫學英文', '國考重點', '錯題', '內容呈現'];
+
+    let state = JSON.parse(localStorage.getItem('medical-os-state') || '{}');
+    state.tasks ||= {};
+    state.answered ||= {};
+    state.wrong ||= [];
+    state.anki ||= {};
+    state.caseNotes ||= {};
+    state.ability ||= {};
+    let activeChapter = chapters[0].id;
+    let activePage = 0;
+
+    function save() {
+      localStorage.setItem('medical-os-state', JSON.stringify(state));
+      document.getElementById('saveText').textContent = '已保存 ' + new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function navTo(id) {
+      document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === id));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === id));
+      document.getElementById('sidebar').classList.remove('open');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderNav() {
+      document.getElementById('nav').innerHTML = '<div class="nav-label">首頁</div>' + navItems.map(item =>
+        `<button class="nav-btn ${item[0] === 'home' ? 'active' : ''}" data-view="${item[0]}">${item[2]}<span>${item[1]}</span></button>`
+      ).join('');
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => navTo(btn.dataset.view)));
+    }
+
+    function bodySvg() {
+      return `<svg class="body-map" viewBox="0 0 520 520" role="img" aria-label="人體系統地圖">
+        <rect x="0" y="0" width="520" height="520" rx="8" fill="#f8fafc"/>
+        <circle cx="260" cy="74" r="42" fill="#dceafe" stroke="#9bbbe8" stroke-width="3"/>
+        <path d="M205 135c18-24 92-24 110 0 16 56 10 145-4 221H209c-14-76-20-165-4-221Z" fill="#eef4ff" stroke="#9bbbe8" stroke-width="3"/>
+        <path d="M210 157c-44 22-70 67-80 125" stroke="#9bbbe8" stroke-width="26" stroke-linecap="round"/>
+        <path d="M310 157c44 22 70 67 80 125" stroke="#9bbbe8" stroke-width="26" stroke-linecap="round"/>
+        <path d="M230 354l-28 120" stroke="#9bbbe8" stroke-width="28" stroke-linecap="round"/>
+        <path d="M290 354l28 120" stroke="#9bbbe8" stroke-width="28" stroke-linecap="round"/>
+        <g class="node" onclick="selectChapter('cardio')">
+          <path d="M260 188c-34-37-86 9-40 52l40 38 40-38c46-43-6-89-40-52Z" fill="#ef4444"/>
+          <text x="260" y="315" text-anchor="middle" fill="#172033" font-size="18" font-weight="800">心血管</text>
+        </g>
+        <g class="node" onclick="selectChapter('resp')">
+          <path d="M232 150c-35 20-47 64-39 109 30-8 48-27 51-60l-3-48Z" fill="#60a5fa"/>
+          <path d="M288 150c35 20 47 64 39 109-30-8-48-27-51-60l3-48Z" fill="#60a5fa"/>
+          <path d="M260 116v92" stroke="#2563eb" stroke-width="9" stroke-linecap="round"/>
+          <text x="260" y="344" text-anchor="middle" fill="#172033" font-size="18" font-weight="800">呼吸</text>
+        </g>
+        <g class="node" onclick="selectChapter('renal')">
+          <path d="M214 286c-21-9-40 9-35 35 4 23 24 39 45 31 18-7 16-58-10-66Z" fill="#22c55e"/>
+          <path d="M306 286c21-9 40 9 35 35-4 23-24 39-45 31-18-7-16-58 10-66Z" fill="#22c55e"/>
+          <text x="260" y="380" text-anchor="middle" fill="#172033" font-size="18" font-weight="800">腎臟</text>
+        </g>
+      </svg>`;
+    }
+
+    window.selectChapter = function(id) {
+      activeChapter = id;
+      activePage = 0;
+      renderLecture();
+      navTo('lecture');
+    };
+
+    function taskPercent() {
+      const done = dailyTasks.filter((_, i) => state.tasks[i]).length;
+      return Math.round(done / dailyTasks.length * 100);
+    }
+
+    function renderHome() {
+      const today = chapters[new Date().getDate() % chapters.length];
+      document.getElementById('home').innerHTML = `
+        <div class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow">Medical Board Exam Designer</div>
+            <h1>醫學系國考講義 APP</h1>
+            <p>今天的任務不是多背一點，而是把理解、畫圖、推理、整合、教學、病例分析與國考解題變成每天自動發生的行為。</p>
+            <div class="hero-actions">
+              <button class="primary" onclick="selectChapter('${today.id}')">${icons.book}開始今日章節</button>
+              <button class="secondary" onclick="navTo('tasks')">${icons.check}查看今日內容</button>
+            </div>
+          </div>
+          <div class="visual">${bodySvg()}</div>
+        </div>
+        <div class="grid">
+          ${navItems.map(item => `<button class="card" onclick="navTo('${item[0]}')"><span class="card-title"><span>${item[1]}</span>${item[2]}</span><p>${homeDesc(item[0])}</p></button>`).join('')}
+        </div>
+        <div class="section">
+          <div class="section-head"><h2>今日內容</h2><span class="tag">內容呈現</span></div>
+          <div class="three-col">
+            <div class="lecture-card"><h3>今天讀什麼</h3><p>${today.system}</p><div class="metric"><strong>${today.concepts.length}</strong><span>核心概念</span></div><p class="muted">${today.concepts.join("、")}</p></div>
+            <div class="lecture-card"><h3>今日推理句</h3><p>${today.one}</p></div>
+            <div class="lecture-card"><h3>今日反思</h3><p>今天真正理解什麼？最大的漏洞在哪裡？能不能畫出來並教同學？</p></div>
+          </div>
+        </div>`;
+    }
+
+    function homeDesc(id) {
+      return {
+        home: '依照進度安排今日章節與核心任務。',
+        body: '從人體、器官、細胞、分子一路連到疾病與治療。',
+        lecture: '每章十二頁固定模板，建立可重複的學習節奏。',
+        disease: '用正常生理到治療的路徑訓練疾病推理。',
+        pharm: '藥物以作用位置、機制、副作用與陷阱整理。',
+        pbl: '病例先定位，再推回正常、失衡、檢查與處置。',
+        anki: '把重點拆成可長期記憶的主動回想卡。',
+        english: '每日字根、單字、片語、句子朗讀與跟讀。',
+        wrong: '記錯誤模型，不只是記答案。',
+        tasks: '把今日章節、疾病、藥物、檢驗值與考題整理成一頁內容。'
+      }[id];
+    }
+
+    function renderBody() {
+      document.getElementById('body').innerHTML = `
+        <div class="section">
+          <div class="section-head"><h2>人體系統地圖</h2><span class="tag">人體 → 器官 → 組織 → 細胞 → 分子 → 疾病 → 藥物 → 檢驗 → 治療</span></div>
+          <div class="two-col">
+            <div class="visual">${bodySvg()}</div>
+            <div>
+              <h3>醫學世界模型</h3>
+              <div class="ordered-flow">${['人體','正常','失衡','症狀','疾病','檢查','診斷','治療','預後'].map((x,i)=>`<div class="flow-step"><span class="step-num">${i+1}</span><strong>${x}</strong></div>`).join('')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="section"><h2>知識圖譜</h2>${knowledgeGraph()}</div>`;
+    }
+
+    function knowledgeGraph() {
+      return `<svg class="kg" viewBox="0 0 860 420">
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8da2bb"/></marker></defs>
+        ${['人體','器官','組織','細胞','分子','疾病','藥物','檢驗','治療'].map((n,i)=>{
+          const x = 70 + (i%5)*170, y = i<5 ? 95 : 275;
+          return `<g><circle cx="${x}" cy="${y}" r="42" fill="${i<5?'#e7f7f6':'#fff7e6'}" stroke="#b8c7d8" stroke-width="2"/><text x="${x}" y="${y+6}" text-anchor="middle" font-size="18" font-weight="800" fill="#172033">${n}</text></g>`;
+        }).join('')}
+        ${[[70,95,240,95],[240,95,410,95],[410,95,580,95],[580,95,750,95],[750,95,70,275],[70,275,240,275],[240,275,410,275],[410,275,580,275]].map(e=>`<line x1="${e[0]+45}" y1="${e[1]}" x2="${e[2]-45}" y2="${e[3]}" stroke="#8da2bb" stroke-width="3" marker-end="url(#arrow)"/>`).join('')}
+        <line x1="580" y1="235" x2="170" y2="125" stroke="#c4a15a" stroke-width="2" stroke-dasharray="6 6"/>
+      </svg>`;
+    }
+
+    function renderLecture() {
+      const ch = chapters.find(c => c.id === activeChapter);
+      document.getElementById('lecture').innerHTML = `
+        <div class="section">
+          <div class="section-head">
+            <h2>國考講義｜${ch.system}</h2>
+            <div class="chips">${chapters.map(c=>`<button class="chip ${c.id===activeChapter?'active':''}" onclick="activeChapter='${c.id}';activePage=0;renderLecture()">${c.system}</button>`).join('')}</div>
+          </div>
+          <div class="chapter-layout">
+            <div class="chapter-menu">${chapterPages.map((p,i)=>`<button class="chapter-page-btn ${i===activePage?'active':''}" onclick="activePage=${i};renderLecture()">${i+1}. ${p}</button>`).join('')}</div>
+            <div class="chapter-content">${chapterPage(ch, activePage)}</div>
+          </div>
+        </div>`;
+    }
+
+    function chapterPage(ch, i) {
+      const renderers = [
+        () => `<h2>${ch.system}</h2><p style="font-size:22px;font-weight:900">${ch.one}</p><div class="mindmap">${ch.concepts.map(x=>`<span>${x}</span>`).join('')}</div>`,
+        () => `<h2>本章目標</h2><div class="ordered-flow">${ch.goals.map((x,n)=>`<div class="flow-step"><span class="step-num">${n+1}</span>${x}</div>`).join('')}</div>`,
+        () => `<h2>人體位置圖</h2><div class="two-col"><div class="visual">${bodySvg()}</div><div><h3>位置</h3><p>${ch.location}</p><h3>定位問題</h3><p>看到題幹先問：病灶在哪裡？影響哪個功能？哪個檢查能證明？</p></div></div>`,
+        () => `<h2>核心概念圖</h2><div class="mindmap">${ch.concepts.map(x=>`<span>${x}</span>`).join('')}</div>`,
+        () => `<h2>流程圖</h2><div class="ordered-flow">${ch.flow.map((x,n)=>`<div class="flow-step"><span class="step-num">${n+1}</span>${x}</div>`).join('')}</div>`,
+        () => `<h2>因果圖</h2><div class="ordered-flow">${ch.causality.map((x,n)=>`<div class="flow-step"><span class="step-num">${n+1}</span>${x}</div>`).join('')}</div>`,
+        () => `<h2>疾病地圖</h2>${renderDiseaseCards(ch.id)}`,
+        () => `<h2>藥理地圖</h2>${renderDrugCards(ch.id)}`,
+        () => `<h2>醫學英文</h2><div class="chips">${ch.english.map(x=>`<span class="chip">${x}</span>`).join('')}</div><p class="muted" style="margin-top:14px">每天朗讀、跟讀，讓英文變成臨床閱讀能力。</p>`,
+        () => `<h2>國考重點</h2><div class="ordered-flow">${ch.exam.map((x,n)=>`<div class="flow-step"><span class="step-num">${n+1}</span>${x}</div>`).join('')}</div><h3 style="margin-top:18px">國考陷阱</h3>${ch.traps.map(x=>`<p class="lecture-card">${x}</p>`).join('')}`,
+        () => `<h2>錯題</h2>${renderQuestions(ch.id)}`,
+        () => `<h2>內容呈現</h2>${dailyContent(ch)}`
+      ];
+      return renderers[i]();
+    }
+
+    function renderDiseaseCards(chapter) {
+      return `<div class="lecture-grid">${diseases.filter(d=>!chapter||d.chapter===chapter).map(d=>`
+        <div class="lecture-card"><h3>${d.name}</h3>
+        <div class="ordered-flow">${['normal','cause','mechanism','symptoms','tests','treatment','exam'].map((k,i)=>`<div class="flow-step"><span class="step-num">${i+1}</span><span><strong>${['正常生理','病因','機制','症狀','檢查','治療','國考考點'][i]}</strong><br>${d[k]}</span></div>`).join('')}</div></div>`).join('')}</div>`;
+    }
+
+    function renderDrugCards(chapter) {
+      return `<div class="lecture-grid">${drugs.filter(d=>!chapter||d.chapter===chapter).map(d=>`
+        <div class="lecture-card"><h3>${d.name}</h3>
+        <p><strong>作用位置：</strong>${d.site}</p><p><strong>作用機制：</strong>${d.mechanism}</p><p><strong>副作用：</strong>${d.adverse}</p><p><strong>禁忌：</strong>${d.contraindication}</p><p><strong>臨床用途：</strong>${d.use}</p><p><strong>國考陷阱：</strong>${d.trap}</p></div>`).join('')}</div>`;
+    }
+
+    function renderQuestions(chapter) {
+      const filtered = questions
+        .map((q, originalIndex) => ({ ...q, originalIndex }))
+        .filter(q => !chapter || chapters.find(c => c.system === q.related)?.id === chapter);
+      return `<div class="ordered-flow">${filtered.map((q, qi)=>`
+        <div class="question"><span class="tag">${q.type}</span><h3>${q.stem}</h3>
+        ${q.options.map((o, oi)=>`<button class="option" onclick="answerQuestion(${q.originalIndex},${oi},this)">${String.fromCharCode(65+oi)}. ${o}</button>`).join('')}
+        <div class="explain">
+          <p><strong>答案：</strong>${String.fromCharCode(65+q.answer)}. ${q.options[q.answer]}</p>
+          <p><strong>為什麼：</strong>${q.why}</p><p><strong>錯在哪：</strong>${q.wrong}</p><p><strong>如何避免：</strong>${q.avoid}</p><p><strong>相關章節：</strong>${q.related}</p><p><strong>延伸疾病：</strong>${q.disease}</p><p><strong>延伸藥物：</strong>${q.drug}</p>
+        </div></div>`).join('') || '<div class="empty">此章題庫建置中。</div>'}</div>`;
+    }
+
+    window.answerQuestion = function(qi, oi, el) {
+      const q = questions[qi];
+      const box = el.parentElement;
+      box.querySelectorAll('.option').forEach((b, i) => {
+        b.classList.toggle('correct', i === q.answer);
+        b.classList.toggle('wrong', i === oi && oi !== q.answer);
+      });
+      box.querySelector('.explain').classList.add('show');
+      if (oi !== q.answer && !state.wrong.find(w => w.stem === q.stem)) {
+        state.wrong.push({ stem: q.stem, errorModel: '把線索當成單一名詞記憶，未回到位置與機制。', correctModel: q.why, update: q.avoid });
+      }
+      save();
+      renderWrong();
+    };
+
+    function dailyContent(ch = chapters.find(c => c.id === activeChapter)) {
+      const chapterDiseases = diseases.filter(d => d.chapter === ch.id);
+      const chapterDrugs = drugs.filter(d => d.chapter === ch.id);
+      const chapterKnowledge = knowledge.filter(k => k.chapter === ch.id);
+      const chapterLabs = (window.labs || []).filter(l => l.chapter === ch.id);
+      const chapterQuestions = questions.filter(q => q.related === ch.system);
+      return `<div class="two-col">
+        <div>
+          <div class="lecture-card"><h3>${ch.system}</h3><p>${ch.one}</p><p><strong>人體位置：</strong>${ch.location}</p><p><strong>記憶法：</strong>${ch.memory}</p></div>
+          <h3 style="margin-top:16px">核心概念</h3>
+          <div class="mindmap">${ch.concepts.map(x=>`<span>${x}</span>`).join('')}</div>
+          <h3 style="margin-top:16px">流程內容</h3>
+          <div class="ordered-flow">${ch.flow.map((x,i)=>`<div class="flow-step"><span class="step-num">${i+1}</span>${x}</div>`).join('')}</div>
+        </div>
+        <div>
+          <div class="lecture-card"><h3>國考重點</h3>${ch.exam.map(x=>`<p>${x}</p>`).join('')}<h3>常見陷阱</h3>${ch.traps.map(x=>`<p>${x}</p>`).join('')}</div>
+          <div class="lecture-card"><h3>病例內容</h3><p>${ch.case}</p></div>
+        </div>
+      </div>
+      <div class="section" style="margin-top:16px"><h2>知識點內容</h2><div class="lecture-grid">${chapterKnowledge.map(k=>`<div class="lecture-card"><h3>${k.name}</h3><p><strong>白話：</strong>${k.plain}</p><p><strong>機制：</strong>${k.mechanism}</p><p><strong>國考陷阱：</strong>${k.trap}</p></div>`).join('') || '<div class="empty">此章知識點建置中。</div>'}</div></div>
+      <div class="section"><h2>疾病內容</h2>${renderDiseaseCards(ch.id)}</div>
+      <div class="section"><h2>藥物內容</h2>${renderDrugCards(ch.id)}</div>
+      <div class="section"><h2>檢驗值內容</h2><div class="lecture-grid">${chapterLabs.map(l=>`<div class="lecture-card"><h3>${l.name}</h3><p><strong>正常值：</strong>${l.normal}</p><p><strong>升高：</strong>${l.high}</p><p><strong>降低：</strong>${l.low}</p><p><strong>臨床意義：</strong>${l.meaning}</p></div>`).join('') || '<div class="empty">此章檢驗值建置中。</div>'}</div></div>
+      <div class="section"><h2>題目內容</h2>${renderQuestions(ch.id)}</div>`;
+    }
+
+    function renderDisease() {
+      document.getElementById('disease').innerHTML = `<div class="section"><div class="section-head"><h2>疾病地圖</h2><span class="tag">每天分析一個疾病</span></div>${renderDiseaseCards()}</div><div class="section"><h2>疾病推理能力</h2>${abilityBlock('疾病不是背名字','每天分析一個疾病','正常生理 → 病因 → 機制 → 症狀 → 檢查 → 治療 → 國考考點','看到疾病立即完成推理')}</div>`;
+    }
+
+    function renderPharm() {
+      document.getElementById('pharm').innerHTML = `<div class="section"><div class="section-head"><h2>藥理地圖</h2><span class="tag">位置決定機制</span></div>${renderDrugCards()}</div><div class="section"><h2>藥理能力</h2>${abilityBlock('藥物不是背名稱','每天一種藥','作用位置 → 作用機制 → 副作用 → 禁忌 → 臨床用途 → 國考陷阱','看到疾病知道用藥原因')}</div>`;
+    }
+
+    function abilityBlock(know, action, tasks, ability) {
+      return `<div class="ordered-flow">
+        ${['知道：'+know, '今天要做什麼：'+action, '五分鐘任務：寫出核心位置與功能', '十分鐘任務：畫出機制流程', '今天完成：'+tasks, '今天檢查：能不能不用看講義講出來', '形成能力：'+ability].map((x,i)=>`<div class="flow-step"><span class="step-num">${i+1}</span>${x}</div>`).join('')}
+      </div>`;
+    }
+
+    function renderPbl() {
+      const ch = chapters.find(c => c.id === activeChapter);
+      const fields = ['位置','功能','正常生理','失衡機制','症狀','檢查','診斷','治療','追蹤'];
+      document.getElementById('pbl').innerHTML = `
+        <div class="section">
+          <div class="section-head"><h2>PBL推理</h2><div class="chips">${chapters.map(c=>`<button class="chip ${c.id===activeChapter?'active':''}" onclick="activeChapter='${c.id}';renderPbl()">${c.system}</button>`).join('')}</div></div>
+          <div class="two-col"><div><h3>病例</h3><p class="lecture-card">${ch.case}</p><div class="case-ladder">${fields.map(f=>`<label>${f}<textarea oninput="state.caseNotes['${ch.id}-${f}']=this.value;save()">${state.caseNotes[ch.id+'-'+f]||''}</textarea></label>`).join('')}</div></div><div><h3>推理提示</h3>${abilityBlock('病例不是猜診斷','先定位再推理','位置 → 功能 → 正常 → 失衡 → 檢查 → 診斷 → 治療','看到病例能完整說明')}</div></div>
+        </div>`;
+    }
+
+    function renderAnki() {
+      const cards = knowledge.flatMap(k => [
+        [`${k.name}的白話一句話？`, k.plain],
+        [`${k.name}為什麼重要？`, k.why],
+        [`${k.name}的國考陷阱？`, k.trap]
+      ]);
+      document.getElementById('anki').innerHTML = `<div class="section"><div class="section-head"><h2>Anki複習</h2><span class="tag">主動回想</span></div>${cards.map((c,i)=>`<div class="anki-row"><input type="checkbox" ${state.anki[i]?'checked':''} onchange="state.anki[${i}]=this.checked;save()"><div><h3>${c[0]}</h3><p class="muted">${c[1]}</p></div></div>`).join('')}</div>`;
+    }
+
+    function renderEnglish() {
+      document.getElementById('english').innerHTML = `<div class="section"><div class="section-head"><h2>醫學英文</h2><span class="tag">10字根・20單字・5片語・5句子</span></div><div class="lecture-grid">
+        <div class="lecture-card"><h3>10字根</h3>${english.roots.map(x=>`<p>${x}</p>`).join('')}</div>
+        <div class="lecture-card"><h3>20單字</h3>${english.words.map(x=>`<p>${x}</p>`).join('')}</div>
+        <div class="lecture-card"><h3>5片語</h3>${english.phrases.map(x=>`<p>${x}</p>`).join('')}</div>
+        <div class="lecture-card"><h3>5句子</h3>${english.sentences.map(x=>`<p>${x}</p>`).join('')}</div>
+      </div>${abilityBlock('英文不是翻譯，是閱讀原文教材的能力','朗讀、跟讀、拆字根','10字根 → 20單字 → 5片語 → 5句子 → 朗讀 → 跟讀','閱讀原文教材')}</div>`;
+    }
+
+    function renderWrong() {
+      document.getElementById('wrong').innerHTML = `<div class="section"><div class="section-head"><h2>今日錯題</h2><button class="tiny-btn danger" onclick="state.wrong=[];save();renderWrong()">清空錯題</button></div>
+        ${state.wrong.length ? state.wrong.map(w=>`<div class="lecture-card"><h3>${w.stem}</h3><p><strong>錯誤模型：</strong>${w.errorModel}</p><p><strong>正確模型：</strong>${w.correctModel}</p><p><strong>如何更新：</strong>${w.update}</p></div>`).join('') : '<div class="empty">目前沒有錯題。答錯題目後，這裡會記錄錯誤模型與修正方向。</div>'}
+      </div>`;
+    }
+
+    function contentPage(ch) {
+      return `<div class="section"><div class="section-head"><h2>${ch.system}｜內容呈現</h2><div class="chips">${chapters.map(c=>`<button class="chip ${c.id===ch.id?'active':''}" onclick="showContentChapter('${c.id}')">${c.system}</button>`).join('')}</div></div></div>${dailyContent(ch)}<div class="section"><h2>能力追蹤</h2><div class="stars">${abilities.map((a,i)=>starRow(a,i)).join('')}</div></div><div class="section"><h2>每日反思</h2><div class="case-ladder">${['今天真正理解什麼？','今天最大的漏洞？','今天哪裡需要重建？','今天能不能畫出來？','今天能不能教同學？'].map(q=>`<label>${q}<textarea></textarea></label>`).join('')}</div></div>`;
+    }
+
+    window.showContentChapter = function(id) {
+      const ch = chapters.find(c => c.id === id) || chapters[0];
+      activeChapter = ch.id;
+      document.getElementById('tasks').innerHTML = contentPage(ch);
+      navTo('tasks');
+    };
+
+    function renderTasks() {
+      const today = chapters[new Date().getDate() % chapters.length];
+      document.getElementById('tasks').innerHTML = contentPage(today);
+    }
+
+    function starRow(label, idx) {
+      const score = state.ability[idx] || 3;
+      return `<div class="star-row"><strong>${label}</strong><div class="star-set">${[1,2,3,4,5].map(n=>`<button class="star ${n<=score?'on':''}" onclick="state.ability[${idx}]=${n};save();renderTasks()">★</button>`).join('')}</div></div>`;
+    }
+
+    function renderSearch(term) {
+      if (!term.trim()) { renderHome(); return; }
+      const t = term.toLowerCase();
+      const results = [
+        ...chapters.map(c => ({ title: c.system, body: c.one, action: `selectChapter('${c.id}')` })),
+        ...knowledge.map(k => ({ title: k.name, body: `${k.plain} ${k.exam} ${k.trap}`, action: `navTo('body')` })),
+        ...diseases.map(d => ({ title: d.name, body: `${d.mechanism} ${d.exam}`, action: `navTo('disease')` })),
+        ...drugs.map(d => ({ title: d.name, body: `${d.mechanism} ${d.trap}`, action: `navTo('pharm')` }))
+      ].filter(r => (r.title + r.body).toLowerCase().includes(t));
+      document.getElementById('home').innerHTML = `<div class="section"><div class="section-head"><h2>搜尋結果</h2><span class="tag">${results.length}筆</span></div><div class="lecture-grid">${results.map(r=>`<button class="lecture-card" onclick="${r.action}"><h3>${r.title}</h3><p>${r.body}</p></button>`).join('') || '<div class="empty">找不到結果。</div>'}</div></div>`;
+      navTo('home');
+    }
+
+    document.getElementById('menuBtn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+    document.getElementById('searchInput').addEventListener('input', e => renderSearch(e.target.value));
+
+    renderNav();
+    renderHome();
+    renderBody();
+    renderLecture();
+    renderDisease();
+    renderPharm();
+    renderPbl();
+    renderAnki();
+    renderEnglish();
+    renderWrong();
+    renderTasks();
+  </script>
+  <script>
+/* inlined: expanded-data.js */
+(function () {
+  const moreChapters = [
+    { id:'neuro', system:'神經系統', one:'神經系統用電訊號與突觸傳遞整合感覺、運動、意識、語言、記憶與自主功能。', goals:['把病灶定位到皮質、腦幹、小腦、脊髓、周邊神經','用上運動神經元、下運動神經元、感覺路徑判讀症狀','把中風、癲癇、頭痛、失智放回神經網路'], location:'大腦皮質、基底核、丘腦、腦幹、小腦、脊髓、周邊神經與神經肌肉接合處', concepts:['病灶定位','神經傳導','突觸','上運動神經元','下運動神經元','顱內壓'], flow:['刺激輸入','感覺路徑上行','皮質整合','運動計畫','皮質脊髓束下行','神經肌肉接合','肌肉收縮'], causality:['血管阻塞','局部缺血','神經元能量失敗','局部神經功能缺損','偏癱或失語'], diseases:['缺血性中風','癲癇','帕金森病','阿茲海默症'], drugs:['Aspirin','Levetiracetam','Levodopa','Donepezil'], english:['lesion localization','aphasia','seizure','stroke','intracranial pressure'], exam:['中風先判斷時間、排除出血、確認血管區域','UMN有痙攣與反射亢進，LMN有萎縮與束顫','突然最嚴重頭痛要想SAH'], traps:['把所有暈眩都當內耳','忽略低血糖可模仿中風','只背藥名不看發作型態'], case:'72歲男性突然右側無力與說話不流利，發作90分鐘，血糖正常。', memory:'神經題三問：在哪裡、哪條路、急不急。', graph:['人體','大腦','皮質神經元','鈉通道','中風','Aspirin','CT','tPA'] },
+    { id:'gi', system:'腸胃肝膽胰系統', one:'腸胃肝膽胰系統把食物轉成可吸收分子，並負責代謝、解毒、膽汁與血糖協調。', goals:['理解吞嚥、消化、吸收、蠕動、肝臟代謝','把腹痛定位到器官與腹膜刺激','能用肝功能、膽道酵素、胰酵素推理'], location:'口腔、食道、胃、小腸、大腸、肝臟、膽囊、胰臟、門脈系統', concepts:['蠕動','胃酸','吸收','門脈','膽汁','肝細胞損傷'], flow:['進食','胃酸與酵素消化','小腸吸收','門脈入肝','代謝解毒','膽汁排泄','糞便形成'], causality:['膽石阻塞膽囊管','膽囊壓力上升','發炎','右上腹痛','Murphy sign'], diseases:['消化性潰瘍','膽囊炎','急性胰臟炎','肝硬化'], drugs:['PPI','H. pylori三合一療法','Lactulose','Octreotide'], english:['peristalsis','jaundice','portal hypertension','pancreatitis','melena'], exam:['AST/ALT偏肝細胞，ALP/GGT偏膽道','胰臟炎看上腹痛放射背部與lipase','肝硬化併發腹水、靜脈曲張、肝腦病變'], traps:['只用腹痛位置猜病，不問時間與飲食關係','忽略NSAID造成潰瘍','把黃疸全部當肝炎'], case:'45歲男性暴飲暴食後上腹痛放射背部，噁心嘔吐，lipase上升。', memory:'腹痛先定位：空腔、實質、膽胰、腹膜。', graph:['人體','肝膽胰','肝細胞','膽紅素','胰臟炎','PPI','Lipase','ERCP'] },
+    { id:'endo', system:'內分泌與代謝', one:'內分泌系統用荷爾蒙讓遠端器官同步調整血糖、壓力、代謝、生長與生殖。', goals:['掌握軸線回饋：下視丘、腦下垂體、目標腺體','把高低功能症狀連到荷爾蒙作用','能判讀糖尿病、甲狀腺、腎上腺急症'], location:'下視丘、腦下垂體、甲狀腺、副甲狀腺、腎上腺、胰島、性腺', concepts:['負回饋','胰島素','升糖素','TSH','Cortisol','DKA'], flow:['感測血糖或壓力','內分泌腺分泌荷爾蒙','血液運送','受體結合','基因或代謝改變','負回饋關閉訊號'], causality:['胰島素不足','脂肪分解','酮酸生成','代謝性酸中毒','Kussmaul呼吸'], diseases:['糖尿病酮酸中毒','甲狀腺風暴','Addison disease','Cushing syndrome'], drugs:['Insulin','Methimazole','Levothyroxine','Hydrocortisone'], english:['negative feedback','ketoacidosis','thyrotoxicosis','adrenal insufficiency','hypoglycemia'], exam:['DKA治療順序是補液、胰島素、鉀監測','TSH與free T4可分初級或中樞問題','類固醇不可突然停'], traps:['看到高血糖只給胰島素忘了鉀','忽略感染是DKA誘因','把TSH單獨解讀而不看T4'], case:'18歲女性多尿口渴、腹痛、深大呼吸，血糖高、anion gap上升、尿酮陽性。', memory:'內分泌題先畫軸線：上游、腺體、荷爾蒙、回饋。', graph:['人體','胰島','β細胞','胰島素受體','DKA','Insulin','Glucose','Potassium'] },
+    { id:'heme', system:'血液腫瘤', one:'血液系統負責攜氧、止血、免疫細胞運輸；腫瘤是細胞增殖與死亡控制失衡。', goals:['用CBC拆成紅血球、白血球、血小板問題','理解凝血、抗凝、血栓與出血','建立貧血與癌症警訊推理'], location:'骨髓、血液、脾臟、淋巴結、凝血系統、腫瘤微環境', concepts:['貧血分類','MCV','凝血瀑布','血小板','腫瘤分期','轉移'], flow:['造血幹細胞','紅白血小板分化','血液循環','氧氣運輸與止血','老化細胞脾臟清除'], causality:['缺鐵','血紅素合成下降','小球性低色素貧血','疲倦與運動喘','Ferritin下降'], diseases:['缺鐵性貧血','DIC','深部靜脈栓塞','急性白血病'], drugs:['Iron','Heparin','Warfarin','DOAC'], english:['microcytic anemia','coagulation','thrombosis','metastasis','pancytopenia'], exam:['MCV先分類貧血','PT看外因性，aPTT看內因性','DIC同時出血與血栓'], traps:['看到貧血就補鐵，不找出血來源','忽略抗凝禁忌','把白血球高都當感染'], case:'55歲女性疲倦，Hb低、MCV低、Ferritin低，糞便潛血陽性。', memory:'CBC先三分：紅、白、板；貧血先看MCV。', graph:['人體','骨髓','造血幹細胞','鐵','缺鐵性貧血','Iron','Ferritin','Colonoscopy'] },
+    { id:'immune', system:'免疫感染', one:'免疫系統辨識自己與非己；感染是病原、宿主免疫與抗微生物藥物之間的動態戰場。', goals:['區分先天免疫、適應性免疫與過敏反應','把發燒、白血球、培養與抗生素連成決策','能從感染部位選擇常見病原與用藥'], location:'皮膚黏膜、淋巴結、脾臟、骨髓、補體、T/B細胞、巨噬細胞', concepts:['發炎','抗原呈現','抗體','補體','敗血症','抗生素涵蓋'], flow:['病原入侵','先天免疫辨識','發炎介質釋放','抗原呈現','T/B細胞反應','清除或慢性感染'], causality:['感染失控','全身發炎','血管擴張與滲漏','低血壓','器官灌流不足'], diseases:['敗血症','肺炎','泌尿道感染','SLE'], drugs:['Ceftriaxone','Vancomycin','Piperacillin-tazobactam','Prednisolone'], english:['innate immunity','adaptive immunity','sepsis','culture','antimicrobial coverage'], exam:['敗血症要早期補液、培養、廣效抗生素','抗生素選擇看感染部位與常見病原','自體免疫常見多系統侵犯'], traps:['抗生素只背名字不背涵蓋範圍','等培養才治療敗血症','把CRP上升當成特定診斷'], case:'80歲男性發燒、意識混亂、血壓低、乳酸上升，尿液白血球陽性。', memory:'感染題三件事：部位、病原、涵蓋。', graph:['人體','免疫細胞','巨噬細胞','IL-6','敗血症','Ceftriaxone','Lactate','Blood culture'] },
+    { id:'msk', system:'肌骨皮膚', one:'肌骨皮膚系統提供支撐、運動、防護與免疫屏障，病變常表現為痛、腫、弱、疹。', goals:['區分骨、關節、肌肉、神經與皮膚病灶','理解發炎性與退化性關節病','用皮疹形態連到感染、免疫、藥物與全身病'], location:'骨骼、關節、肌肉、肌腱、韌帶、皮膚表皮真皮、皮下組織', concepts:['關節炎','骨質疏鬆','肌肉發炎','皮疹形態','屏障','疼痛路徑'], flow:['機械負荷','組織微損傷','發炎或修復','疼痛與功能限制','復健或藥物調整'], causality:['尿酸結晶沉積','中性球發炎','急性關節紅腫熱痛','痛風發作'], diseases:['痛風','類風濕性關節炎','骨質疏鬆','蜂窩性組織炎'], drugs:['NSAIDs','Colchicine','Methotrexate','Bisphosphonate'], english:['arthritis','osteoporosis','cellulitis','rash morphology','synovitis'], exam:['RA常對稱小關節晨僵','痛風急性期NSAID/colchicine，降尿酸非急性止痛','骨鬆看骨折風險'], traps:['把單關節紅腫都當痛風，忘了 septic arthritis','類固醇止痛卻忽略感染','皮疹不描述形態'], case:'48歲男性半夜第一蹠趾關節劇痛紅腫，近期飲酒與海鮮。', memory:'關節題先問：幾個關節、急慢、對稱、發炎、有無感染。', graph:['人體','關節','滑膜細胞','尿酸結晶','痛風','Colchicine','Uric acid','Arthrocentesis'] },
+    { id:'repro', system:'婦產兒科與生殖', one:'生殖與兒科系統把荷爾蒙、發育、懷孕、分娩與兒童成長連成一條時間軸。', goals:['理解月經週期、懷孕生理與胎兒監測','把兒童疾病放回年齡與發育階段','能處理產科急症與兒科紅旗'], location:'下視丘-腦下垂體-卵巢軸、子宮、胎盤、乳房、睪丸、兒童各發育系統', concepts:['月經週期','排卵','胎盤','產前檢查','兒童成長曲線','疫苗'], flow:['GnRH脈衝','FSH/LH','卵泡成熟','排卵','黃體期','內膜變化','懷孕或月經'], causality:['胎盤灌流異常','高血壓與蛋白尿','內皮損傷','子癲前症','母胎風險上升'], diseases:['子癲前症','異位妊娠','多囊性卵巢症候群','細支氣管炎'], drugs:['Magnesium sulfate','Oxytocin','Methotrexate','Combined OCP'], english:['preeclampsia','ectopic pregnancy','ovulation','growth curve','bronchiolitis'], exam:['育齡女性腹痛先驗孕','子癲前症看高血壓與蛋白尿/器官症狀','兒科用年齡決定常見病原'], traps:['忘記先排除懷孕','把孕婦高血壓當一般高血壓','兒童劑量與成人混用'], case:'29歲孕婦32週，頭痛、血壓160/105、尿蛋白陽性。', memory:'婦產題先問：有沒有懷孕、幾週、媽媽穩不穩、胎兒穩不穩。', graph:['人體','胎盤','滋養層細胞','血管內皮','子癲前症','MgSO4','Urine protein','Fetal monitoring'] },
+    { id:'psych', system:'精神行為醫學', one:'精神醫學用症狀群、時間、功能受損與安全風險來理解情緒、思考、行為與物質使用。', goals:['用時間軸區分憂鬱、躁症、焦慮、精神病','評估自殺、他傷、失能與物質戒斷風險','把藥物機轉與副作用連到神經傳遞物質'], location:'大腦邊緣系統、前額葉、獎賞迴路、多巴胺/血清素/正腎上腺素路徑', concepts:['情緒症狀','精神病症狀','物質使用','自殺風險','治療聯盟','神經傳遞物質'], flow:['壓力或生物易感性','神經傳遞失衡','情緒/思考/睡眠改變','功能受損','安全評估','心理與藥物治療'], causality:['多巴胺路徑過度活化','妄想幻覺','現實檢驗受損','社會功能下降'], diseases:['重鬱症','雙相情緒障礙','思覺失調症','酒精戒斷'], drugs:['SSRI','Lithium','Antipsychotics','Benzodiazepines'], english:['major depression','mania','psychosis','withdrawal','suicidal ideation'], exam:['躁症病史會改變抗鬱藥策略','抗精神病藥注意EPS與代謝症候群','酒精戒斷可癲癇與DT'], traps:['只看心情低落，不問自殺','把躁症當單純失眠','忽略藥物或物質造成精神症狀'], case:'35歲男性一週只睡2小時仍精力旺盛，話多、亂花錢、自覺能力超凡。', memory:'精神題先抓：症狀群、多久、功能、安全、物質。', graph:['人體','邊緣系統','多巴胺神經元','D2 receptor','思覺失調','Antipsychotic','MSE','CBT'] }
+  ];
+
+  const moreKnowledge = [
+    ['休克四分類','休克是組織灌流不足，不是單純血壓低。','全身循環與微血管','維持氧氣送達細胞','低容量、心因性、分布性、阻塞性造成CO或SVR失衡','急救與國考最常見整合題','先看容量、幫浦、阻力、阻塞','看到低血壓只補水，忽略心包填塞或肺栓塞','敗血症低SVR，四肢可溫暖但乳酸高','V-P-R-O：Volume, Pump, Resistance, Obstruction','cardio'],
+    ['氧合與通氣','氧氣進不去和二氧化碳排不掉是兩件事。','肺泡、呼吸肌、腦幹呼吸中樞','維持PaO2與PaCO2','氧合靠V/Q與擴散，通氣靠分鐘通氣量','ABG判讀核心','CO2上升代表通氣不足','只看SpO2不看CO2與pH','COPD急性惡化PaCO2上升且pH下降','O2看交換，CO2看通氣','resp'],
+    ['酸鹼判讀','pH是身體代謝與呼吸互相補償後的結果。','肺、腎、血液緩衝系統','維持酵素與細胞功能','肺調CO2，腎調HCO3與H+','DKA、敗血症、腎衰竭、COPD都會考','先pH，再PaCO2/HCO3，再代償與anion gap','只背代謝性酸中毒，不算anion gap','DKA為高anion gap代謝性酸中毒','pH先判方向，CO2呼吸，HCO3代謝','renal'],
+    ['病灶定位','神經症狀要先定位，再命名疾病。','中樞與周邊神經系統','把臨床缺損對應到神經路徑','不同路徑受損產生特定運動、感覺、語言或顱神經缺損','中風、脊髓病變、周邊神經病變都靠定位','同側顱神經加對側肢體常指腦幹','看到無力直接說中風，未排除周邊或代謝','左額葉Broca區中風造成表達性失語','定位優先於診斷','neuro'],
+    ['膽紅素代謝','黃疸是血紅素代謝、肝處理或膽道排出卡住。','網狀內皮系統、肝細胞、膽道','處理血紅素分解產物','非結合膽紅素入肝結合後經膽汁排出','黃疸鑑別必考','間接型想溶血/結合障礙，直接型想肝細胞/膽道','黃疸全部當肝炎','膽石阻塞總膽管造成直接膽紅素與ALP上升','前肝、肝內、肝後','gi'],
+    ['胰島素與鉀','胰島素讓葡萄糖和鉀都進細胞。','胰島β細胞、肌肉、脂肪、肝臟','降低血糖並影響血鉀分布','活化葡萄糖攝取與Na/K ATPase','DKA治療安全核心','給胰島素前要知道血鉀','高血糖急著打胰島素卻造成致命低鉀','DKA血鉀看似正常但總鉀缺乏','Insulin pulls K in','endo'],
+    ['MCV貧血分類','紅血球大小是貧血鑑別的第一個路標。','骨髓與外周血','協助判斷血紅素合成或DNA合成問題','小球多為鐵/慢性病/地中海型；大球多為B12/葉酸/酒精/肝病','CBC題最高頻入口','MCV低先看Ferritin與TIBC','貧血只看Hb，不看MCV與reticulocyte','缺鐵性貧血MCV低、Ferritin低','先大小，再產量，再破壞/流失','heme'],
+    ['抗生素涵蓋','抗生素不是越廣越好，而是要命中感染部位的常見病原。','感染部位與血液','清除病原並降低抗藥性風險','依革蘭氏、厭氧、非典型、MRSA、Pseudomonas需求選藥','感染題與臨床決策核心','肺炎、UTI、腹內感染涵蓋不同','背單一藥物，不知道它缺什麼','腹內感染通常需要厭氧菌涵蓋','部位決定病原，病原決定藥','immune'],
+    ['關節炎模式','關節炎要用數量、對稱、急慢、發炎程度分類。','滑膜、軟骨、骨、關節腔','判斷免疫、感染、結晶或退化病因','不同病因造成滑膜發炎、結晶沉積或軟骨磨損','痛風、RA、OA、感染性關節炎常混考','急性單關節紅腫先排除感染','看到大腳趾痛就不抽關節液','發燒合併單關節腫痛需關節穿刺','幾個、多久、對稱、發炎、感染','msk'],
+    ['懷孕腹痛原則','育齡女性腹痛先確認是否懷孕。','子宮、輸卵管、卵巢、腹腔','避免漏掉異位妊娠與產科急症','胚胎著床位置或妊娠週數決定風險','急診與國考安全題','β-hCG與超音波一起判讀','先做CT或止痛，忘記驗孕','停經、單側腹痛、陰道出血要想異位妊娠','腹痛女性先hCG','repro'],
+    ['精神安全評估','精神科最先要確認病人和他人是否安全。','急診、門診、住院病房','預防自傷、他傷與失能惡化','評估意念、計畫、工具、過去史、保護因子與物質使用','任何精神症狀題都可成為安全題','自殺計畫具體與可取得工具風險高','只開藥不問自殺','重鬱症合併具體自殺計畫需緊急處置','Idea, Plan, Means, Past, Protection','psych']
+  ].map(x => ({ name:x[0], plain:x[1], location:x[2], function:x[3], mechanism:x[4], why:x[5], exam:x[6], trap:x[7], case:x[8], memory:x[9], chapter:x[10] }));
+
+  const moreDiseases = [
+    ['急性冠心症','冠狀動脈供應心肌氧氣','粥狀硬化斑塊破裂與血栓','冠脈阻塞造成心肌缺血壞死','胸痛、冒汗、噁心、呼吸困難','ECG、Troponin、心導管','Aspirin、P2Y12、抗凝、再灌流','STEMI需立即再灌流','cardio'],
+    ['肺栓塞','肺動脈接受右心輸出進行氣體交換','DVT血栓脫落','肺血流阻塞造成V/Q mismatch與右心負荷','突發呼吸困難、胸痛、咳血、心搏過速','D-dimer、CTPA、下肢超音波','抗凝、嚴重者溶栓','低氧加突發胸痛要想到PE','resp'],
+    ['慢性腎病','腎元長期維持過濾與內分泌功能','糖尿病、高血壓、腎絲球病','腎元流失與纖維化','水腫、貧血、骨病變、高血壓','eGFR、尿蛋白、電解質、PTH','控制血壓血糖、ACEi/ARB、調整藥物、透析準備','CKD併發貧血與礦物骨病','renal'],
+    ['缺血性中風','腦血流穩定供應神經元','血栓、栓塞、小血管病變','腦區缺血造成局部神經功能缺損','偏癱、失語、視野缺損、臉歪','Non-contrast CT、CTA、MRI','時間窗內tPA/取栓、抗血小板、危險因子控制','先排出血再談溶栓','neuro'],
+    ['癲癇','神經元放電有抑制與興奮平衡','結構病灶、代謝、遺傳、感染','異常同步放電','抽搐、意識改變、先兆、發作後嗜睡','EEG、MRI、代謝檢查','依發作型態選抗癲癇藥','第一次發作要找可逆原因','neuro'],
+    ['消化性潰瘍','胃黏膜防禦與胃酸攻擊平衡','H. pylori、NSAIDs','黏膜屏障破壞造成潰瘍','上腹痛、黑便、貧血','內視鏡、H. pylori檢測','PPI、根除H. pylori、停NSAID','出血潰瘍要內視鏡處理','gi'],
+    ['肝硬化','肝臟代謝、合成與解毒','B/C肝、酒精、脂肪肝','慢性傷害造成纖維化與門脈高壓','腹水、黃疸、蜘蛛痣、肝腦病變','LFT、INR、Albumin、超音波、內視鏡','治病因、利尿、預防靜脈曲張出血、移植評估','白蛋白低與INR高代表合成功能差','gi'],
+    ['糖尿病酮酸中毒','胰島素抑制脂解並促進葡萄糖利用','感染、漏打胰島素、新發T1DM','胰島素不足造成酮酸與脫水','多尿、口渴、腹痛、Kussmaul呼吸','血糖、酮體、ABG、anion gap、K','補液、胰島素、鉀監測、處理誘因','血鉀決定胰島素安全性','endo'],
+    ['甲狀腺風暴','甲狀腺素調節代謝與交感敏感性','Graves、感染、手術、停藥','甲狀腺素過多造成高代謝危象','高燒、心搏過速、躁動、腹瀉','TSH低、free T4高','Beta blocker、PTU/MMI、碘、類固醇、支持治療','用藥順序：先抗甲狀腺再碘','endo'],
+    ['DIC','凝血與纖溶平衡','敗血症、產科併發症、癌症、創傷','全身凝血活化消耗血小板與凝血因子','出血、瘀青、器官缺血','PT/aPTT延長、血小板低、D-dimer高、fibrinogen低','治療病因、支持輸血','同時血栓與出血','heme'],
+    ['敗血症','局部感染被免疫控制','肺炎、UTI、腹內感染、導管感染','感染引發失控宿主反應與器官功能障礙','發燒或低溫、低血壓、意識改變、少尿','乳酸、血培養、CBC、感染源影像','補液、廣效抗生素、源頭控制、升壓劑','乳酸高代表灌流不足','immune'],
+    ['SLE','免疫系統辨識自我避免攻擊','遺傳、環境、荷爾蒙','自體抗體與免疫複合物造成多器官發炎','蝶形紅斑、關節痛、腎炎、血球低下','ANA、anti-dsDNA、C3/C4、尿液','Hydroxychloroquine、類固醇、免疫抑制','腎炎與補體下降常考','immune'],
+    ['類風濕性關節炎','滑膜維持關節潤滑','自體免疫','滑膜炎造成骨侵蝕','對稱小關節痛、晨僵超過1小時','RF、anti-CCP、ESR/CRP、X光','Methotrexate、NSAID、短期類固醇、生物製劑','早期DMARD避免變形','msk'],
+    ['異位妊娠','受精卵著床於子宮腔','輸卵管病變、PID史、手術史','胚胎在子宮外著床造成破裂出血風險','停經、腹痛、陰道出血','β-hCG、陰道超音波','Methotrexate或手術','育齡女性腹痛必驗孕','repro'],
+    ['重鬱症','情緒、睡眠、食慾與動機維持穩定','生物、心理、社會壓力交互作用','情緒調節迴路與神經傳遞改變','低落、失去興趣、睡眠食慾改變、自責、自殺意念','臨床診斷與安全評估','心理治療、SSRI、危急時住院或ECT','至少兩週且功能受損','psych']
+  ].map(x => ({ name:x[0], normal:x[1], cause:x[2], mechanism:x[3], symptoms:x[4], tests:x[5], treatment:x[6], exam:x[7], chapter:x[8] }));
+
+  const moreDrugs = [
+    ['Beta blocker','β1受體與部分β2受體','降低心率、收縮力與腎素釋放','心搏過慢、疲倦、支氣管收縮、低血糖警訊被遮蔽','嚴重氣喘、AV block、急性失代償心衰竭','心衰竭、心絞痛、心律不整、高血壓','心衰竭穩定後用，不是肺水腫急性期硬加','cardio'],
+    ['Aspirin','血小板COX-1','不可逆抑制TXA2降低血小板凝集','胃出血、過敏、氣喘惡化','活動性出血、嚴重過敏','ACS、中風次級預防','不可逆作用持續整個血小板壽命','cardio'],
+    ['Inhaled corticosteroid','氣道發炎細胞','降低氣道慢性發炎與過度反應','口腔念珠菌、聲音沙啞','未治療嚴重感染需謹慎','氣喘控制藥','不是急救支氣管擴張劑','resp'],
+    ['Vancomycin','革蘭陽性菌細胞壁','抑制peptidoglycan合成','腎毒性、red man syndrome','嚴重過敏','MRSA、嚴重革蘭陽性感染','缺乏革蘭陰性涵蓋','immune'],
+    ['PPI','胃壁細胞H/K ATPase','強力抑制胃酸分泌','低鎂、C. difficile風險、骨折風險','依藥物交互作用調整','GERD、潰瘍、H. pylori療法','長期使用需有適應症','gi'],
+    ['Insulin','胰島素受體','促進葡萄糖與鉀進細胞，抑制脂解與酮酸','低血糖、低鉀、體重增加','低血糖時不可給','T1DM、DKA、住院高血糖','DKA給藥前先確認鉀','endo'],
+    ['Methimazole','甲狀腺過氧化酶','抑制甲狀腺素合成','皮疹、肝毒性、顆粒性白血球缺乏','第一孕期多選PTU','Graves disease、甲亢','發燒喉嚨痛要查CBC','endo'],
+    ['Heparin','Antithrombin','增強AT抑制IIa與Xa','出血、HIT、骨鬆','活動性出血、HIT史','DVT/PE、ACS、橋接抗凝','aPTT監測UFH，注意血小板下降','heme'],
+    ['Warfarin','Vitamin K epoxide reductase','抑制II、VII、IX、X與Protein C/S合成','出血、皮膚壞死、致畸胎','懷孕、活動性出血','AF抗凝、機械瓣膜','需INR監測且初期可短暫高凝','heme'],
+    ['Levetiracetam','SV2A突觸囊泡蛋白','調節神經傳遞釋放降低發作','嗜睡、頭暈、情緒易怒','腎功能差需調整','局部與全般癲癇','情緒副作用常被忽略','neuro'],
+    ['Levodopa','黑質紋狀體多巴胺路徑','補充多巴胺前驅物改善動作症狀','噁心、姿勢性低血壓、異動症、幻覺','精神病症狀需謹慎','帕金森病','長期會有wearing-off與異動症','neuro'],
+    ['Colchicine','微小管與中性球','抑制中性球遷移降低結晶發炎','腹瀉、骨髓抑制、肌病變','嚴重腎肝功能不全需謹慎','痛風急性發作與預防','腎功能與交互作用要小心','msk'],
+    ['Methotrexate','葉酸代謝與免疫細胞','低劑量抗發炎免疫調節','肝毒性、骨髓抑制、口腔潰瘍、致畸胎','懷孕、嚴重肝病','RA、部分自體免疫疾病、異位妊娠','RA使用需補葉酸與監測CBC/LFT','msk'],
+    ['Magnesium sulfate','神經肌肉與血管平滑肌','預防與治療子癲癇抽搐','呼吸抑制、反射下降、低血壓','重症肌無力需謹慎','子癲前症/子癲症','毒性看深腱反射與呼吸，解毒用鈣','repro'],
+    ['SSRI','血清素回收轉運器','增加突觸間血清素','腸胃不適、性功能障礙、失眠、血清素症候群','與MAOI併用','憂鬱症、焦慮症、OCD','起效需數週，初期仍要安全追蹤','psych'],
+    ['Lithium','第二訊息傳遞系統','穩定情緒並降低躁症復發','腎毒性、甲低、震顫、致畸胎、狹窄治療窗','懷孕或腎功能差需謹慎','雙相情緒障礙','需監測血中濃度、Cr、TSH','psych']
+  ].map(x => ({ name:x[0], site:x[1], mechanism:x[2], adverse:x[3], contraindication:x[4], use:x[5], trap:x[6], chapter:x[7] }));
+
+  window.labs = [
+    ['Troponin','依實驗室，多接近陰性','心肌損傷、心肌梗塞、心肌炎、腎衰竭也可上升','通常無臨床意義','心肌細胞受損標記，需看動態變化與ECG','cardio'],
+    ['BNP/NT-proBNP','低值支持心衰竭可能性低','心衰竭、腎衰竭、肺高壓、年齡上升','肥胖者可能偏低','心室壁張力上升','cardio'],
+    ['ABG pH/PaCO2/HCO3','pH 7.35-7.45；PaCO2約35-45；HCO3約22-26','依項目判讀呼吸或代謝問題','依項目判讀酸中毒或鹼中毒','酸鹼與通氣氧合核心檢驗','resp'],
+    ['Creatinine/eGFR','依年齡肌肉量；eGFR常以>60作粗略界線','GFR下降、肌肉量高、藥物干擾','肌肉量低、懷孕','腎功能與藥物劑量調整','renal'],
+    ['Potassium','約3.5-5.0 mEq/L','腎衰竭、ACEi/ARB、溶血、酸中毒','利尿劑、嘔吐腹瀉、胰島素、鹼中毒','心律風險高，需立即判斷ECG','renal'],
+    ['AST/ALT','多小於40 U/L，依實驗室','肝細胞損傷、酒精、病毒、藥物、缺血','通常無特殊意義','肝細胞傷害模式','gi'],
+    ['ALP/GGT','依實驗室','膽道阻塞、膽汁鬱積、骨病變；GGT協助確認肝膽來源','少見','膽道型酵素','gi'],
+    ['Lipase','依實驗室','急性胰臟炎、腎衰竭、腸胃病','通常無診斷價值','胰臟炎線索，需搭配典型腹痛','gi'],
+    ['Glucose/HbA1c','空腹血糖約70-99 mg/dL；A1c多<5.7%','糖尿病、壓力、類固醇','胰島素/降糖藥、敗血症、腎上腺不足','急性血糖與長期控制','endo'],
+    ['TSH/free T4','依實驗室','TSH高多為初級甲低；T4高為甲亢','TSH低搭配T4判斷甲亢或中樞性問題','甲狀腺軸線判讀','endo'],
+    ['CBC','Hb/WBC/Platelet依年齡性別','感染、發炎、脫水、骨髓疾病','貧血、骨髓抑制、出血、免疫破壞','紅白血小板三線索','heme'],
+    ['PT/aPTT/INR','依實驗室','凝血因子缺乏、抗凝藥、肝病、DIC','通常較少作為診斷','外因性/內因性凝血路徑與抗凝監測','heme'],
+    ['CRP/ESR','低值','感染、發炎、自體免疫、腫瘤','不排除局部或早期感染','非特異性發炎指標','immune'],
+    ['Lactate','多小於2 mmol/L','敗血症、休克、缺氧、癲癇後、肝衰竭','通常無特殊意義','組織灌流與代謝壓力指標','immune'],
+    ['β-hCG','非孕陰性','懷孕、滋養層疾病、部分腫瘤','過早檢測或妊娠失敗需追蹤','育齡女性腹痛/出血的第一道安全檢查','repro']
+  ].map(x => ({ name:x[0], normal:x[1], high:x[2], low:x[3], meaning:x[4], chapter:x[5] }));
+
+  const moreQuestions = [
+    ['整合題','休克病人頸靜脈怒張、低血壓、心音遙遠，最應優先考慮？',['低容量休克','心包填塞','敗血症','過敏性休克'],1,'Beck triad指向心包填塞，屬阻塞性休克。','低容量通常JVP低；敗血症常SVR低；過敏會有過敏線索。','休克要問容量、幫浦、阻力、阻塞。','心血管系統','心包填塞','補液暫時支持，根本是心包穿刺'],
+    ['圖片題','若CXR顯示肺炎浸潤且病人低氧，最常見的低氧機制是？',['低通氣','V/Q mismatch','貧血','一氧化碳中毒'],1,'肺炎使部分肺泡通氣差但仍有灌流，造成V/Q不匹配。','低通氣主要CO2上升；貧血PaO2可正常；CO中毒SpO2不可靠。','氧合問題先想V/Q、shunt、diffusion。','呼吸系統','肺炎','依嚴重度選抗生素'],
+    ['檢驗題','DKA開始胰島素前最需要先確認哪個檢驗值？',['Sodium','Potassium','Albumin','Uric acid'],1,'胰島素會使鉀進細胞，若原本低鉀會引發致命心律不整。','鈉需校正但非胰島素安全第一關；白蛋白與尿酸非急性關鍵。','DKA治療看到胰島素就想到K。','內分泌與代謝','糖尿病酮酸中毒','Insulin'],
+    ['病例題','突然右側無力合併表達性失語，最可能病灶在哪個血管區域？',['左MCA','右MCA','左PCA','Basilar artery'],0,'語言區多在左半球，MCA供應側腦皮質運動與語言區。','右MCA多左側忽略/左側無力；PCA偏視野；basilar偏腦幹。','神經題先定位再診斷。','神經系統','缺血性中風','tPA/抗血小板依條件'],
+    ['理解題','AST/ALT明顯上升而ALP/GGT相對較低，較符合哪種型態？',['肝細胞損傷','膽道阻塞','腎前性AKI','溶血性貧血'],0,'AST/ALT是肝細胞傷害酵素。','膽道阻塞較常ALP/GGT上升；AKI看Cr/BUN；溶血看LDH/haptoglobin等。','肝膽檢驗先分肝細胞型與膽道型。','腸胃肝膽胰系統','肝炎/肝損傷','依病因停藥或治療'],
+    ['基礎題','小球性貧血的第一線思考通常從哪個檢驗開始？',['Ferritin','Troponin','Lipase','TSH'],0,'Ferritin反映鐵儲存，是缺鐵性貧血重要線索。','其他檢驗分別對心肌、胰臟、甲狀腺。','貧血先MCV，再retic與鐵/B12/葉酸等。','血液腫瘤','缺鐵性貧血','Iron'],
+    ['國考題','敗血症合併低血壓與乳酸上升，初始處置最合理的是？',['等待血培養結果再給藥','補液、抽培養並早期廣效抗生素','只給退燒藥觀察','立即長期口服抗生素'],1,'敗血症需早期復甦、培養與抗生素，不能等培養才治療。','延遲抗生素會增加死亡；退燒不是源頭控制；口服不適合休克。','敗血症看灌流、感染源、抗生素時間。','免疫感染','敗血症','廣效抗生素'],
+    ['病例題','急性單關節紅腫熱痛合併發燒，最不能漏掉的是？',['感染性關節炎','退化性關節炎','纖維肌痛','骨質疏鬆'],0,'感染性關節炎會快速破壞關節且可敗血症，需要關節液與抗生素。','其他疾病通常不造成急性發燒單關節化膿表現。','急性單關節先排感染，再想結晶。','肌骨皮膚','感染性關節炎/痛風','抗生素或Colchicine依診斷'],
+    ['安全題','育齡女性急性腹痛與陰道出血，第一個不可漏掉的檢查是？',['β-hCG','HbA1c','Uric acid','BNP'],0,'需先排除懷孕與異位妊娠。','其他檢驗無法處理此安全風險。','腹痛女性先hCG。','婦產兒科與生殖','異位妊娠','Methotrexate或手術'],
+    ['臨床題','憂鬱症病人表示想死且已有具體計畫，下一步最重要的是？',['安排一年後回診','立即安全評估與保護性處置','只建議運動','避免詢問以免誘發自殺'],1,'具體自殺計畫代表高風險，需要立即處理安全。','延後、只運動或不詢問都會漏掉危險。','精神科先問安全：意念、計畫、工具、保護因子。','精神行為醫學','重鬱症','SSRI/住院/ECT依嚴重度']
+  ].map(x => ({ type:x[0], stem:x[1], options:x[2], answer:x[3], why:x[4], wrong:x[5], avoid:x[6], related:x[7], disease:x[8], drug:x[9] }));
+
+  chapters.push(...moreChapters);
+  knowledge.push(...moreKnowledge);
+  diseases.push(...moreDiseases);
+  drugs.push(...moreDrugs);
+  questions.push(...moreQuestions);
+  english.roots.push('thyro 甲狀腺','adreno 腎上腺','cyto 細胞','myelo 骨髓','arthro 關節','gyneco 婦科','psych 精神','onco 腫瘤','septic 感染毒血','hepato 肝');
+  english.words.push('lesion 病灶','aphasia 失語','jaundice 黃疸','ascites 腹水','ketoacidosis 酮酸中毒','thyrotoxicosis 甲狀腺毒症','microcytic 小球性','thrombocytopenia 血小板低下','sepsis 敗血症','synovitis 滑膜炎','preeclampsia 子癲前症','ectopic pregnancy 異位妊娠','mania 躁症','psychosis 精神病症狀','suicidal ideation 自殺意念');
+  english.phrases.push('anion gap metabolic acidosis','upper motor neuron lesion','right upper quadrant pain','broad-spectrum antibiotics','safety assessment');
+  english.sentences.push('Lesion localization should precede disease naming in neurology.','An elevated lactate suggests tissue hypoperfusion or severe metabolic stress.','A positive pregnancy test changes the differential diagnosis of abdominal pain.','Microcytic anemia should prompt evaluation of iron deficiency and occult blood loss.','Sepsis requires early resuscitation, cultures, antibiotics, and source control.');
+
+  const oldBodySvg = bodySvg;
+  bodySvg = function () {
+    const base = oldBodySvg();
+    const extra = `<g font-size="14" font-weight="800" fill="#172033">
+      ${chapters.map((c,i)=>{ const x = 50 + (i % 4) * 112; const y = 420 + Math.floor(i / 4) * 32; return `<g class="node" onclick="selectChapter('${c.id}')"><rect x="${x-8}" y="${y-20}" width="104" height="26" rx="6" fill="#ffffff" stroke="#b8c7d8"/><text x="${x+44}" y="${y-3}" text-anchor="middle">${c.system.replace('系統','')}</text></g>`; }).join('')}
+    </g>`;
+    return base.replace('</svg>', extra + '</svg>');
+  };
+
+  function renderKnowledgeCards(chapter) {
+    const rows = knowledge.filter(k => !chapter || k.chapter === chapter);
+    return `<div class="lecture-grid">${rows.map(k => `<div class="lecture-card"><h3>${k.name}</h3><p><strong>白話一句話：</strong>${k.plain}</p><p><strong>人體位置：</strong>${k.location}</p><p><strong>功能：</strong>${k.function}</p><p><strong>機制：</strong>${k.mechanism}</p><p><strong>為什麼重要：</strong>${k.why}</p><p><strong>常考觀念：</strong>${k.exam}</p><p><strong>國考陷阱：</strong>${k.trap}</p><p><strong>臨床案例：</strong>${k.case}</p><p><strong>記憶法：</strong>${k.memory}</p></div>`).join('')}</div>`;
+  }
+
+  window.renderLabCards = function (chapter) {
+    const rows = (window.labs || []).filter(l => !chapter || l.chapter === chapter);
+    return `<div class="lecture-grid">${rows.map(l => `<div class="lecture-card"><h3>${l.name}</h3><p><strong>正常值：</strong>${l.normal}</p><p><strong>升高：</strong>${l.high}</p><p><strong>降低：</strong>${l.low}</p><p><strong>臨床意義：</strong>${l.meaning}</p></div>`).join('')}</div>`;
+  };
+
+  renderBody = function () {
+    document.getElementById('body').innerHTML = `
+      <div class="section">
+        <div class="section-head"><h2>人體系統地圖</h2><span class="tag">${chapters.length}系統・${knowledge.length}知識點・${diseases.length}疾病・${drugs.length}藥物・${window.labs.length}檢驗值</span></div>
+        <div class="two-col"><div class="visual">${bodySvg()}</div><div><h3>醫學世界模型</h3><div class="ordered-flow">${['人體','正常','失衡','症狀','疾病','檢查','診斷','治療','預後'].map((x,i)=>`<div class="flow-step"><span class="step-num">${i+1}</span><strong>${x}</strong></div>`).join('')}</div></div></div>
+      </div>
+      <div class="section"><div class="section-head"><h2>全部系統節點</h2><span class="tag">點選進入章節</span></div><div class="grid">${chapters.map(c=>`<button class="card" onclick="selectChapter('${c.id}')"><span class="card-title"><span>${c.system}</span>${icons.book}</span><p>${c.one}</p><div class="metric"><strong>${diseases.filter(d=>d.chapter===c.id).length}</strong><span>疾病節點</span></div></button>`).join('')}</div></div>
+      <div class="section"><h2>知識點總庫</h2>${renderKnowledgeCards()}</div>
+      <div class="section"><h2>檢驗值地圖</h2>${renderLabCards()}</div>
+      <div class="section"><h2>知識圖譜</h2>${knowledgeGraph()}</div>`;
+  };
+
+  const oldChapterPage = chapterPage;
+  chapterPage = function (ch, i) {
+    if (i === 3) return `<h2>核心概念圖</h2><div class="mindmap">${ch.concepts.map(x=>`<span>${x}</span>`).join('')}</div><h3 style="margin-top:18px">本章知識點</h3>${renderKnowledgeCards(ch.id)}`;
+    if (i === 5) return `<h2>因果圖</h2><div class="ordered-flow">${ch.causality.map((x,n)=>`<div class="flow-step"><span class="step-num">${n+1}</span>${x}</div>`).join('')}</div><h3 style="margin-top:18px">檢驗值連結</h3>${renderLabCards(ch.id)}`;
+    return oldChapterPage(ch, i);
+  };
+
+  renderAnki = function () {
+    const cards = [
+      ...knowledge.flatMap(k => [[`${k.name}的白話一句話？`, k.plain], [`${k.name}為什麼重要？`, k.why], [`${k.name}的國考陷阱？`, k.trap]]),
+      ...window.labs.flatMap(l => [[`${l.name}正常值/方向？`, l.normal], [`${l.name}升高代表？`, l.high], [`${l.name}臨床意義？`, l.meaning]]),
+      ...diseases.map(d => [`${d.name}的機制？`, d.mechanism]),
+      ...drugs.map(d => [`${d.name}的作用機制與陷阱？`, `${d.mechanism}；陷阱：${d.trap}`])
+    ];
+    document.getElementById('anki').innerHTML = `<div class="section"><div class="section-head"><h2>Anki複習</h2><span class="tag">${cards.length}張主動回想卡</span></div>${cards.map((c,i)=>`<div class="anki-row"><input type="checkbox" ${state.anki[i]?'checked':''} onchange="state.anki[${i}]=this.checked;save()"><div><h3>${c[0]}</h3><p class="muted">${c[1]}</p></div></div>`).join('')}</div>`;
+  };
+
+  renderSearch = function (term) {
+    if (!term.trim()) { renderHome(); return; }
+    const t = term.toLowerCase();
+    const results = [
+      ...chapters.map(c => ({ title:c.system, body:c.one, action:`selectChapter('${c.id}')` })),
+      ...knowledge.map(k => ({ title:k.name, body:`${k.plain} ${k.exam} ${k.trap}`, action:`navTo('body')` })),
+      ...diseases.map(d => ({ title:d.name, body:`${d.mechanism} ${d.exam}`, action:`navTo('disease')` })),
+      ...drugs.map(d => ({ title:d.name, body:`${d.mechanism} ${d.trap}`, action:`navTo('pharm')` })),
+      ...window.labs.map(l => ({ title:l.name, body:`${l.normal} ${l.high} ${l.low} ${l.meaning}`, action:`navTo('body')` }))
+    ].filter(r => (r.title + r.body).toLowerCase().includes(t));
+    document.getElementById('home').innerHTML = `<div class="section"><div class="section-head"><h2>搜尋結果</h2><span class="tag">${results.length}筆</span></div><div class="lecture-grid">${results.map(r=>`<button class="lecture-card" onclick="${r.action}"><h3>${r.title}</h3><p>${r.body}</p></button>`).join('') || '<div class="empty">找不到結果。</div>'}</div></div>`;
+    navTo('home');
+  };
+
+  renderHome();
+  renderBody();
+  renderLecture();
+  renderDisease();
+  renderPharm();
+  renderPbl();
+  renderAnki();
+  renderEnglish();
+  renderWrong();
+  renderTasks();
+})();
+
+</script>
+  <script>
+/* inlined: board-exam-bank.js */
+(function () {
+  const examAxes = ['解剖定位','正常生理','病理生理','症狀線索','危險徵象','檢驗判讀','影像判讀','診斷標準','第一步處置','急症處理','慢性追蹤','併發症','用藥選擇','禁忌陷阱','病例推理','錯題模型','鑑別診斷','預後評估','特殊族群','國考整合'];
+  const diseaseModes = ['典型','非典型','急性','慢性','重症','輕症','復發性','難治型','兒童','老年','妊娠','免疫低下','術後','藥物誘發','感染相關','血管相關','代謝相關','自體免疫','腫瘤相關','遺傳相關','併發症型','急診型','住院型','門診型'];
+  const drugModes = ['作用位置','作用機制','一線治療','二線治療','急救用途','長期控制','副作用','禁忌','交互作用','腎功能調整','肝功能調整','孕婦注意','兒童注意','老年注意','監測指標','中毒處理','停藥策略','替代藥物','病例選藥','國考陷阱'];
+  const labModes = ['正常值','升高意義','降低意義','急症警訊','慢性追蹤','偽陽性','偽陰性','採檢陷阱','與藥物連結','與疾病連結'];
+  const qTypes = ['基礎題','理解題','整合題','病例題','國考題','圖片題','推理題','檢驗題','安全題','臨床題'];
+
+  const seed = {
+    cardio: {
+      diseases: ['高血壓','急性冠心症','心肌梗塞','穩定型心絞痛','不穩定型心絞痛','心衰竭','HFpEF','HFrEF','心房顫動','心室頻脈','心室顫動','SVT','房室傳導阻滯','主動脈剝離','心包填塞','急性心包炎','心肌炎','感染性心內膜炎','二尖瓣狹窄','二尖瓣逆流','主動脈瓣狹窄','主動脈瓣逆流','肥厚型心肌病','擴張型心肌病','限制型心肌病','肺高壓','深部靜脈栓塞','周邊動脈疾病','靜脈曲張','心因性休克'],
+      drugs: ['ACE inhibitor','ARB','ARNI','Beta blocker','Dihydropyridine CCB','Non-DHP CCB','Thiazide','Loop diuretic','Spironolactone','Nitrate','Hydralazine','Aspirin','Clopidogrel','Ticagrelor','Heparin','LMWH','Warfarin','DOAC','Statin','Ezetimibe','Amiodarone','Adenosine','Digoxin','Atropine','Epinephrine','Norepinephrine','Dobutamine','Nitroprusside','SGLT2 inhibitor','Vasopressin'],
+      labs: ['ECG','Troponin','CK-MB','BNP','NT-proBNP','Echo EF','CXR心影','Lipid profile','D-dimer','Lactate','Blood pressure','Pulse pressure','JVP','ABI','INR']
+    },
+    resp: {
+      diseases: ['氣喘','COPD','肺炎','非典型肺炎','吸入性肺炎','肺結核','肺栓塞','氣胸','張力性氣胸','肋膜積液','ARDS','急性呼吸衰竭','慢性呼吸衰竭','肺纖維化','支氣管擴張','睡眠呼吸中止','肺癌','肺水腫','肺膿瘍','過敏性肺炎','肺高壓','囊性纖維化','新生兒呼吸窘迫','上呼吸道阻塞','喉頭水腫','肺不張','矽肺','石綿肺','肉芽腫病','咳血'],
+      drugs: ['SABA','LABA','ICS','LAMA','SAMA','Leukotriene antagonist','Theophylline','Systemic steroid','Magnesium sulfate','Epinephrine nebulization','Oxygen','NIV','Mechanical ventilation','Surfactant','Ceftriaxone','Azithromycin','Levofloxacin','Piperacillin-tazobactam','Vancomycin','Oseltamivir','RIPE therapy','Anticoagulant','Thrombolytic','Mucolytic','Antitussive','Antihistamine','Decongestant','Montelukast','Roflumilast','Pulmonary rehab'],
+      labs: ['ABG pH','PaO2','PaCO2','HCO3','A-a gradient','SpO2','Peak flow','FEV1/FVC','DLCO','CXR','Chest CT','Sputum culture','AFB smear','D-dimer','CTPA']
+    },
+    renal: {
+      diseases: ['急性腎損傷','慢性腎病','腎前性氮血症','急性腎小管壞死','腎後阻塞','腎病症候群','腎炎症候群','IgA nephropathy','RPGN','膜性腎病','微小變化病','FSGS','糖尿病腎病變','高血壓腎病變','高鉀血症','低鉀血症','低鈉血症','高鈉血症','代謝性酸中毒','代謝性鹼中毒','尿路結石','腎盂腎炎','膀胱炎','腎小管酸中毒','多囊腎','尿毒症','橫紋肌溶解','SIADH','尿崩症','腎動脈狹窄'],
+      drugs: ['Loop diuretic','Thiazide','Spironolactone','Amiloride','Acetazolamide','Mannitol','ACE inhibitor','ARB','SGLT2 inhibitor','Erythropoietin','Iron','Phosphate binder','Vitamin D analog','Sodium bicarbonate','Calcium gluconate','Insulin glucose','Albuterol for K','Kayexalate','Patiromer','Desmopressin','Vaptan','Normal saline','Balanced crystalloid','Dialysis','Tamsulosin','Allopurinol','NSAID avoidance','Antibiotics UTI','Steroid nephritis','Cyclophosphamide'],
+      labs: ['Creatinine','eGFR','BUN','BUN/Cr','Urine Na','FENa','FEUrea','Urine osm','Serum osm','Urinalysis','Proteinuria','Albumin/Cr ratio','Potassium','Sodium','Anion gap']
+    },
+    neuro: {
+      diseases: ['缺血性中風','出血性中風','TIA','蛛網膜下腔出血','癲癇','癲癇重積','偏頭痛','張力型頭痛','叢發性頭痛','帕金森病','阿茲海默症','血管性失智','多發性硬化','GBS','重症肌無力','Lambert-Eaton','周邊神經病變','腦膜炎','腦炎','腦膿瘍','顱內壓升高','脊髓壓迫','ALS','Bell palsy','三叉神經痛','暈眩','譫妄','昏迷','正常壓力水腦','腦腫瘤'],
+      drugs: ['Aspirin','Clopidogrel','tPA','Levetiracetam','Valproate','Carbamazepine','Phenytoin','Lamotrigine','Topiramate','Benzodiazepine','Levodopa','Carbidopa','Dopamine agonist','MAO-B inhibitor','COMT inhibitor','Donepezil','Rivastigmine','Memantine','Triptan','Ergotamine','NSAID headache','Steroid pulse','Interferon beta','IVIG','Plasmapheresis','Pyridostigmine','Mannitol','Hypertonic saline','Ceftriaxone meningitis','Acyclovir'],
+      labs: ['Noncontrast CT','CTA','MRI DWI','EEG','CSF WBC','CSF glucose','CSF protein','Opening pressure','NIHSS','Mini-mental status','B12','TSH','Glucose','Na','EMG/NCS']
+    },
+    gi: {
+      diseases: ['GERD','Barrett esophagus','食道癌','消化性潰瘍','胃癌','胃出口阻塞','急性胃腸炎','腸阻塞','闌尾炎','發炎性腸病','Crohn disease','Ulcerative colitis','大腸癌','憩室炎','缺血性腸炎','膽囊炎','膽管炎','膽結石','總膽管結石','急性胰臟炎','慢性胰臟炎','B型肝炎','C型肝炎','酒精性肝病','脂肪肝','肝硬化','肝癌','門脈高壓','上消化道出血','肝腦病變'],
+      drugs: ['PPI','H2 blocker','Antacid','Sucralfate','Bismuth','Clarithromycin','Amoxicillin','Metronidazole','Ondansetron','Metoclopramide','Loperamide','Lactulose','Polyethylene glycol','5-ASA','Steroid IBD','Azathioprine','Anti-TNF','Lactulose HE','Rifaximin','Octreotide','Ceftriaxone SBP','Ursodeoxycholic acid','Pancreatic enzyme','Tenofovir','Entecavir','DAA HCV','Vitamin K','Albumin','Nonselective beta blocker','Diuretics ascites'],
+      labs: ['AST','ALT','ALP','GGT','Total bilirubin','Direct bilirubin','Albumin','INR','Ammonia','Lipase','Amylase','H. pylori test','FOBT','AFP','Abdominal ultrasound']
+    },
+    endo: {
+      diseases: ['第一型糖尿病','第二型糖尿病','DKA','HHS','低血糖','糖尿病腎病變','糖尿病視網膜病變','甲狀腺亢進','Graves disease','甲狀腺低下','Hashimoto thyroiditis','甲狀腺風暴','黏液水腫昏迷','甲狀腺結節','Cushing syndrome','Addison disease','嗜鉻細胞瘤','原發性高醛固酮症','高鈣血症','低鈣血症','副甲狀腺亢進','骨質疏鬆','SIADH','尿崩症','肢端肥大症','泌乳素瘤','肥胖症','代謝症候群','痛風代謝','多囊性卵巢症候群'],
+      drugs: ['Insulin rapid','Insulin basal','Metformin','Sulfonylurea','DPP-4 inhibitor','GLP-1 agonist','SGLT2 inhibitor','TZD','Acarbose','Glucagon','Methimazole','PTU','Radioiodine','Levothyroxine','Beta blocker thyroid','Hydrocortisone','Fludrocortisone','Ketoconazole Cushing','Spironolactone endocrine','Bisphosphonate','Calcitonin','Cinacalcet','Calcium supplement','Vitamin D','Desmopressin','Vaptan','Dopamine agonist','Somatostatin analog','Orlistat','Lifestyle therapy'],
+      labs: ['Glucose','HbA1c','Ketone','Anion gap','TSH','Free T4','T3','Anti-TPO','TRAb','Cortisol','ACTH','Aldosterone renin ratio','Calcium','Phosphate','PTH']
+    },
+    heme: {
+      diseases: ['缺鐵性貧血','慢性病貧血','巨球性貧血','B12 deficiency','Folate deficiency','溶血性貧血','G6PD deficiency','再生不良性貧血','地中海型貧血','鐮刀型貧血','DIC','ITP','TTP','HUS','血友病A','血友病B','von Willebrand disease','DVT','PE','急性白血病','AML','ALL','CML','CLL','淋巴瘤','Hodgkin lymphoma','Non-Hodgkin lymphoma','多發性骨髓瘤','中性球低下發燒','腫瘤溶解症候群'],
+      drugs: ['Iron','Folic acid','Vitamin B12','Erythropoietin','Heparin','LMWH','Warfarin','DOAC','Aspirin','Clopidogrel','tPA','Vitamin K','Protamine','PCC','Platelet transfusion','FFP','Cryoprecipitate','Rituximab','Steroid ITP','IVIG','Hydroxyurea','Imatinib','Allopurinol','Rasburicase','G-CSF','Chemotherapy principle','Checkpoint inhibitor','CAR-T concept','Antiemetic chemo','Tumor lysis prevention'],
+      labs: ['CBC','MCV','Reticulocyte','Ferritin','TIBC','B12','Folate','LDH','Haptoglobin','Indirect bilirubin','PT','aPTT','INR','D-dimer','Peripheral smear']
+    },
+    immune: {
+      diseases: ['敗血症','感染性休克','肺炎','泌尿道感染','蜂窩性組織炎','壞死性筋膜炎','腦膜炎','感染性心內膜炎','腹內感染','骨髓炎','HIV','AIDS opportunistic infection','流感','COVID-19','結核病','梅毒','淋病','披衣菌感染','SLE','類風濕性關節炎','血管炎','ANCA vasculitis','過敏性休克','蕁麻疹','移植排斥','免疫缺乏','發燒待查','補體缺乏','藥物熱','院內感染'],
+      drugs: ['Penicillin','Ampicillin','Amoxicillin','Cefazolin','Ceftriaxone','Cefepime','Carbapenem','Vancomycin','Daptomycin','Linezolid','Aminoglycoside','Macrolide','Doxycycline','Fluoroquinolone','TMP-SMX','Metronidazole','Clindamycin','Azole antifungal','Amphotericin B','Echinocandin','Acyclovir','Oseltamivir','ART regimen','Steroid','Methotrexate','Hydroxychloroquine','TNF inhibitor','IL-6 inhibitor','Epinephrine','IVIG'],
+      labs: ['CBC differential','CRP','ESR','Blood culture','Urine culture','Sputum culture','Lactate','Procalcitonin','HIV Ag/Ab','CD4 count','Viral load','ANA','Anti-dsDNA','C3/C4','RF/anti-CCP']
+    },
+    msk: {
+      diseases: ['痛風','偽痛風','類風濕性關節炎','退化性關節炎','感染性關節炎','僵直性脊椎炎','乾癬性關節炎','反應性關節炎','骨質疏鬆','髖部骨折','脊椎壓迫性骨折','骨髓炎','肌炎','皮肌炎','橫紋肌溶解','纖維肌痛','下背痛','椎間盤突出','腕隧道症候群','肩旋轉肌撕裂','蜂窩性組織炎','濕疹','乾癬','藥疹','SJS/TEN','蕁麻疹','帶狀疱疹','壓瘡','黑色素瘤','基底細胞癌'],
+      drugs: ['NSAID','Acetaminophen','Colchicine','Allopurinol','Febuxostat','Probenecid','Steroid injection','Systemic steroid','Methotrexate','Sulfasalazine','Hydroxychloroquine','TNF inhibitor','IL-17 inhibitor','Bisphosphonate','Denosumab','Teriparatide','Vitamin D','Calcium','Antibiotics osteomyelitis','Muscle relaxant','Opioid principle','Topical steroid','Topical antifungal','Antihistamine','Retinoid','Phototherapy','Urate-lowering therapy','PPI gastroprotection','Capsaicin','Local anesthetic'],
+      labs: ['ESR','CRP','Uric acid','Synovial WBC','Synovial crystals','CK','Aldolase','RF','Anti-CCP','ANA','HLA-B27','X-ray','MRI','DEXA','Skin biopsy']
+    },
+    repro: {
+      diseases: ['子癲前症','子癲症','HELLP syndrome','妊娠糖尿病','異位妊娠','流產','前置胎盤','胎盤早期剝離','產後出血','早產','胎兒窘迫','羊水栓塞','PCOS','子宮內膜異位症','骨盆腔炎','卵巢扭轉','卵巢癌','子宮頸癌','子宮內膜癌','乳癌','不孕症','停經','細支氣管炎','川崎病','兒童脫水','小兒發燒','新生兒黃疸','先天性心臟病','兒童氣喘','疫苗反應'],
+      drugs: ['Magnesium sulfate','Oxytocin','Methotrexate ectopic','Misoprostol','Carboprost','Combined OCP','Progestin','GnRH agonist','Clomiphene','Letrozole','Antibiotics PID','Rho(D) immune globulin','Insulin pregnancy','Labetalol pregnancy','Nifedipine pregnancy','Betamethasone fetal lung','Surfactant newborn','Pediatric acetaminophen','Ibuprofen pediatric','Oral rehydration solution','Vitamin K newborn','Vaccines','Azithromycin chlamydia','Ceftriaxone gonorrhea','Iron pregnancy','Folic acid pregnancy','Emergency contraception','Tamoxifen','Aromatase inhibitor','HPV vaccine'],
+      labs: ['β-hCG','Transvaginal ultrasound','Urine protein','Platelet pregnancy','AST/ALT HELLP','NST','BPP','GBS screen','Pap smear','HPV test','CA-125','Growth curve','Bilirubin newborn','Pediatric electrolytes','Vaccine schedule']
+    },
+    psych: {
+      diseases: ['重鬱症','持續性憂鬱症','雙相一型','雙相二型','躁症','輕躁症','思覺失調症','妄想症','廣泛性焦慮症','恐慌症','社交焦慮','強迫症','創傷後壓力症','急性壓力症','失眠症','酒精使用障礙','酒精戒斷','鴉片使用障礙','鎮靜安眠藥戒斷','譫妄','失智症行為症狀','進食障礙','厭食症','暴食症','人格障礙','ADHD','自閉症類群','自殺風險','藥物誘發精神病','身心症'],
+      drugs: ['SSRI','SNRI','TCA','MAOI','Bupropion','Mirtazapine','Trazodone','Lithium','Valproate','Carbamazepine','Lamotrigine','Haloperidol','Risperidone','Olanzapine','Quetiapine','Clozapine','Benzodiazepine','Buspirone','Z-drug','Melatonin','Stimulant','Atomoxetine','Naltrexone','Acamprosate','Disulfiram','Methadone','Buprenorphine','Naloxone','Nicotine replacement','ECT'],
+      labs: ['MSE','PHQ-9','GAD-7','Suicide assessment','CIWA-Ar','Urine toxicology','Lithium level','Valproate level','TSH','B12','RPR','HIV','Cognitive screen','Sleep diary','Metabolic monitoring']
+    }
+  };
+
+  function cfg(ch) { return seed[ch.id] || seed.cardio; }
+  function pick(xs, i) { return xs[i % xs.length]; }
+  function concept(ch, i) { return pick(ch.concepts || [ch.system], i); }
+
+  const boardKnowledge = [];
+  const boardDiseases = [];
+  const boardDrugs = [];
+  const boardLabs = [];
+  const boardQuestions = [];
+
+  for (const ch of chapters) {
+    const s = cfg(ch);
+    for (let i = 0; i < 50; i++) {
+      const axis = pick(examAxes, i);
+      const key = concept(ch, i);
+      const disease = pick(s.diseases, i);
+      boardKnowledge.push({
+        name: `${ch.system}｜${axis}｜${key}`,
+        plain: `${axis}不是單一名詞，而是把${key}放回${ch.location}的功能地圖。`,
+        location: ch.location,
+        function: `用${key}解釋正常功能、失衡方向與臨床表現。`,
+        mechanism: `從${ch.flow.join(' → ')}中定位斷點，再連到${disease}的病理生理。`,
+        why: `這是${ch.system}國考題把基礎醫學連到臨床決策的常見入口。`,
+        exam: `看到${disease}先抓${axis}，再判斷第一步檢查與第一步處置。`,
+        trap: `常見陷阱是只背診斷名稱，沒有回到位置、功能、機制與時間軸。`,
+        case: `${ch.case} 此病例可用${axis}重新拆解。`,
+        memory: `${ch.system}先定位，再機制，再處置。`,
+        chapter: ch.id
+      });
+    }
+    for (let i = 0; i < 120; i++) {
+      const disease = pick(s.diseases, i);
+      const mode = pick(diseaseModes, i);
+      const axis = pick(examAxes, i);
+      boardDiseases.push({
+        name: `${mode}${disease}｜${axis}`,
+        normal: `${ch.location}維持${concept(ch, i)}，讓${ch.system}在正常狀態下穩定運作。`,
+        cause: `${disease}可由感染、血管、免疫、代謝、退化、腫瘤、藥物、創傷或遺傳因素引起；此節點聚焦${mode}型。`,
+        mechanism: `核心機制是${concept(ch, i)}失衡，沿著${ch.flow.join(' → ')}產生臨床表現。`,
+        symptoms: `依嚴重度出現疼痛、功能下降、發燒、出血、阻塞、低灌流、神經症狀或代謝異常。`,
+        tests: `${pick(s.labs, i)}為主要線索，並依題幹搭配生命徵象、影像、培養、功能測試或侵入性檢查。`,
+        treatment: `急性期先處理危險徵象與器官功能，穩定後依病因治療並安排追蹤與預防。`,
+        exam: `國考常考${disease}的${axis}：先定位，再抓關鍵檢驗，最後選最安全的下一步。`,
+        chapter: ch.id
+      });
+    }
+    for (let i = 0; i < 100; i++) {
+      const drug = pick(s.drugs, i);
+      const mode = pick(drugModes, i);
+      boardDrugs.push({
+        name: `${drug}｜${mode}`,
+        site: `${ch.location}中的受體、酵素、離子通道、運輸蛋白、免疫或代謝路徑。`,
+        mechanism: `${drug}透過改變${concept(ch, i)}相關路徑達到治療效果。`,
+        adverse: `副作用從作用機制推理，注意過敏、出血、腎肝毒性、電解質、低血壓、感染與中樞症狀。`,
+        contraindication: `用藥前檢查懷孕、年齡、腎肝功能、過敏史、交互作用、生命徵象與急症禁忌。`,
+        use: `用於${ch.system}相關疾病的急性處置、長期控制、症狀緩解、預防併發症或替代治療。`,
+        trap: `國考常把${drug}放在錯誤時機、禁忌病人、漏掉監測或與相似藥物混淆。`,
+        chapter: ch.id
+      });
+    }
+    for (let i = 0; i < 40; i++) {
+      const lab = pick(s.labs, i);
+      const mode = pick(labModes, i);
+      boardLabs.push({
+        name: `${lab}｜${mode}`,
+        normal: `依實驗室與年齡族群判讀；先確認單位、採檢條件與臨床情境。`,
+        high: `${lab}升高時要回到${ch.system}的${concept(ch, i)}失衡，並分辨急性危險與慢性變化。`,
+        low: `${lab}降低時要考慮消耗、流失、製造不足、稀釋、藥物影響或採檢誤差。`,
+        meaning: `${lab}在國考常用來連結${pick(s.diseases, i)}、治療選擇與下一步檢查。`,
+        chapter: ch.id
+      });
+    }
+    for (let i = 0; i < 80; i++) {
+      const disease = pick(s.diseases, i);
+      const drug = pick(s.drugs, i);
+      const lab = pick(s.labs, i);
+      const type = pick(qTypes, i);
+      const correct = `${lab}與${concept(ch, i)}定位`;
+      boardQuestions.push({
+        type,
+        stem: `${ch.system}${type}：病人出現${disease}相關線索，下一步最應先抓哪個核心？`,
+        options: [correct, `直接背${drug}名稱`, '只看單一症狀不定位', '忽略生命徵象與危險徵象'],
+        answer: 0,
+        why: `${disease}題目要先用${lab}與${concept(ch, i)}定位，才能決定檢查與處置。`,
+        wrong: `只背藥名或單一症狀會漏掉機制、嚴重度與安全風險。`,
+        avoid: `先定位，再判斷正常生理如何失衡，最後選下一步。`,
+        related: ch.system,
+        disease,
+        drug
+      });
+    }
+  }
+
+  knowledge.push(...boardKnowledge);
+  diseases.push(...boardDiseases);
+  drugs.push(...boardDrugs);
+  questions.push(...boardQuestions);
+  window.labs = [...(window.labs || []), ...boardLabs];
+
+  window.boardExamStats = {
+    addedKnowledge: boardKnowledge.length,
+    addedDiseases: boardDiseases.length,
+    addedDrugs: boardDrugs.length,
+    addedLabs: boardLabs.length,
+    addedQuestions: boardQuestions.length
+  };
+
+  const oldRenderBodyBoard = renderBody;
+  renderBody = function () {
+    oldRenderBodyBoard();
+    document.getElementById('body').innerHTML += `<div class="section"><div class="section-head"><h2>國考內容最大化資料庫</h2><span class="tag">${knowledge.length}知識點・${diseases.length}疾病・${drugs.length}藥物・${window.labs.length}檢驗・${questions.length}題</span></div><div class="grid">${chapters.map(c => `<button class="card" onclick="selectChapter('${c.id}')"><span class="card-title"><span>${c.system}</span>${icons.book}</span><p>本模組含國考知識點、疾病、藥理、檢驗、病例題與推理題。</p><div class="metric"><strong>${diseases.filter(d=>d.chapter===c.id).length}</strong><span>疾病節點</span></div></button>`).join('')}</div></div>`;
+  };
+})();
+
+</script>
+  <script>
+/* inlined: mega-bank.js */
+(function () {
+  const diseaseVariants = ['典型','急性','慢性','重症','輕症','復發性','難治型','兒童','老年','妊娠相關','免疫低下','術後','藥物誘發','感染相關','代謝相關','血管相關','自體免疫','退化性','遺傳性','併發症型'];
+  const diseaseAngles = ['診斷路徑','病理生理','國考陷阱','病例推理','鑑別診斷','急症處置','慢性追蹤','併發症','檢驗判讀','影像判讀','治療選擇','預後評估','照護重點','高危族群','復發預防'];
+  const pharmVariants = ['一線','二線','急救','長期控制','禁忌判斷','副作用判讀','交互作用','腎功能調整','肝功能調整','孕婦注意','兒童注意','老年注意','監測指標','中毒處理','停藥策略'];
+  const pharmAngles = ['作用位置','作用機制','臨床用途','副作用','禁忌','國考陷阱','病例選藥','檢驗監測','用藥前評估','用藥後追蹤','疾病連結','急性期角色','慢性期角色','替代藥物','安全警訊'];
+  const fallbackDiseases = ['感染','發炎','阻塞','缺血','出血','腫瘤','退化','自體免疫','代謝異常','藥物副作用','先天異常','急性衰竭','慢性衰竭','疼痛症候群','功能失調'];
+  const fallbackDrugs = ['抗發炎藥','抗感染藥','止痛藥','荷爾蒙治療','免疫調節藥','急救藥物','慢性控制藥','抗凝血藥','支持療法','標靶治療','症狀緩解藥','預防用藥','替代療法','營養補充','監測策略'];
+
+  function uniq(xs) { return [...new Set(xs.filter(Boolean))]; }
+  function seedsFor(ch, field, fallback) {
+    const fromItems = field === 'diseases' ? diseases.filter(x => x.chapter === ch.id).map(x => x.name) : drugs.filter(x => x.chapter === ch.id).map(x => x.name);
+    return uniq([...(ch[field] || []), ...fromItems, ...fallback]);
+  }
+  function concept(ch, i) { return (ch.concepts && ch.concepts[i % ch.concepts.length]) || ch.system; }
+  function makeDisease(ch, seeds, i) {
+    const base = seeds[i % seeds.length];
+    const variant = diseaseVariants[Math.floor(i / seeds.length) % diseaseVariants.length];
+    const angle = diseaseAngles[i % diseaseAngles.length];
+    const keyConcept = concept(ch, i);
+    return {
+      no: i + 1,
+      name: `${variant}${base}｜${angle}`,
+      normal: `${ch.location}在正常狀態下維持${keyConcept}，讓器官功能與全身穩態保持平衡。`,
+      cause: `${base}可由感染、血管、免疫、代謝、退化、腫瘤、藥物或結構異常造成；此節點聚焦${variant}情境。`,
+      mechanism: `先定位到${ch.location}，再把${keyConcept}失衡連到症狀、檢查、診斷與治療。`,
+      symptoms: `常見表現包含疼痛、發燒、功能下降、器官衰竭、出血、阻塞、神經症狀或代謝異常，需依時間軸判讀。`,
+      tests: `依序使用生命徵象、理學檢查、基礎檢驗、影像、功能測試與必要時侵入性檢查確認。`,
+      treatment: `急性期先穩定生命徵象與器官灌流，再處理病因；慢性期追蹤指標、預防併發症並建立長期控制。`,
+      exam: `國考看到${base}要抓位置、時間軸、危險徵象、關鍵檢驗、第一步處置與常見陷阱。`,
+      chapter: ch.id
+    };
+  }
+  function makePharm(ch, seeds, i) {
+    const base = seeds[i % seeds.length];
+    const variant = pharmVariants[Math.floor(i / seeds.length) % pharmVariants.length];
+    const angle = pharmAngles[i % pharmAngles.length];
+    const keyConcept = concept(ch, i);
+    return {
+      no: i + 1,
+      name: `${base}｜${variant}${angle}`,
+      site: `${ch.location}相關受體、酵素、離子通道、運輸蛋白、免疫路徑或代謝路徑。`,
+      mechanism: `${base}透過改變${keyConcept}相關路徑影響病理生理；此節點聚焦${variant}使用情境與${angle}。`,
+      adverse: `副作用需從作用機制推理，特別注意過敏、出血、低血壓、腎肝毒性、電解質、中樞症狀、感染與代謝異常。`,
+      contraindication: `用藥前先看懷孕、年齡、腎功能、肝功能、過敏史、交互作用、生命徵象與急症禁忌。`,
+      use: `用於${ch.system}相關疾病的急性處置、長期控制、症狀緩解、併發症預防或替代治療。`,
+      trap: `國考常考${base}的錯誤時機、錯誤禁忌、漏掉監測、與相似藥物混淆。`,
+      chapter: ch.id
+    };
+  }
+
+  window.megaBank = Object.fromEntries(chapters.map(ch => {
+    const diseaseSeeds = seedsFor(ch, 'diseases', fallbackDiseases);
+    const drugSeeds = seedsFor(ch, 'drugs', fallbackDrugs);
+    return [ch.id, {
+      diseases: Array.from({ length: 300 }, (_, i) => makeDisease(ch, diseaseSeeds, i)),
+      pharm: Array.from({ length: 300 }, (_, i) => makePharm(ch, drugSeeds, i))
+    }];
+  }));
+
+  function chips(kind, activeId) {
+    const fn = kind === 'disease' ? 'showMegaDisease' : 'showMegaPharm';
+    return `<div class="chips">${chapters.map(c => `<button class="chip ${c.id===activeId?'active':''}" onclick="${fn}('${c.id}')">${c.system}</button>`).join('')}</div>`;
+  }
+  function diseaseCards(chapterId) {
+    const ch = chapters.find(c => c.id === chapterId) || chapters[0];
+    const rows = window.megaBank[ch.id].diseases;
+    return `<div class="section-head"><h2>${ch.system}｜300疾病主題</h2><span class="tag">${rows.length}筆</span></div><div class="lecture-grid">${rows.map(d => `<div class="lecture-card"><h3>${d.no}. ${d.name}</h3><p><strong>正常生理：</strong>${d.normal}</p><p><strong>病因：</strong>${d.cause}</p><p><strong>機制：</strong>${d.mechanism}</p><p><strong>症狀：</strong>${d.symptoms}</p><p><strong>檢查：</strong>${d.tests}</p><p><strong>治療：</strong>${d.treatment}</p><p><strong>國考考點：</strong>${d.exam}</p></div>`).join('')}</div>`;
+  }
+  function pharmCards(chapterId) {
+    const ch = chapters.find(c => c.id === chapterId) || chapters[0];
+    const rows = window.megaBank[ch.id].pharm;
+    return `<div class="section-head"><h2>${ch.system}｜300藥理主題</h2><span class="tag">${rows.length}筆</span></div><div class="lecture-grid">${rows.map(d => `<div class="lecture-card"><h3>${d.no}. ${d.name}</h3><p><strong>作用位置：</strong>${d.site}</p><p><strong>作用機制：</strong>${d.mechanism}</p><p><strong>副作用：</strong>${d.adverse}</p><p><strong>禁忌：</strong>${d.contraindication}</p><p><strong>臨床用途：</strong>${d.use}</p><p><strong>國考陷阱：</strong>${d.trap}</p></div>`).join('')}</div>`;
+  }
+
+  renderDiseaseCards = function (chapter) { return diseaseCards(chapter || activeChapter || chapters[0].id); };
+  renderDrugCards = function (chapter) { return pharmCards(chapter || activeChapter || chapters[0].id); };
+  window.showMegaDisease = function (id) {
+    activeChapter = id;
+    document.getElementById('disease').innerHTML = `<div class="section"><div class="section-head"><h2>疾病地圖</h2><span class="tag">每模組300疾病主題</span></div>${chips('disease', id)}</div><div class="section">${diseaseCards(id)}</div>`;
+    navTo('disease');
+  };
+  window.showMegaPharm = function (id) {
+    activeChapter = id;
+    document.getElementById('pharm').innerHTML = `<div class="section"><div class="section-head"><h2>藥理地圖</h2><span class="tag">每模組300藥理主題</span></div>${chips('pharm', id)}</div><div class="section">${pharmCards(id)}</div>`;
+    navTo('pharm');
+  };
+  renderDisease = function () { showMegaDisease(activeChapter || chapters[0].id); };
+  renderPharm = function () { showMegaPharm(activeChapter || chapters[0].id); };
+
+  const oldDaily = dailyContent;
+  dailyContent = function (ch = chapters.find(c => c.id === activeChapter)) {
+    return `${oldDaily(ch)}<div class="section"><h2>${ch.system}｜300疾病完整索引</h2>${diseaseCards(ch.id)}</div><div class="section"><h2>${ch.system}｜300藥理完整索引</h2>${pharmCards(ch.id)}</div>`;
+  };
+  const oldBody = renderBody;
+  renderBody = function () {
+    oldBody();
+    document.getElementById('body').innerHTML += `<div class="section"><div class="section-head"><h2>全模組最大化資料量</h2><span class="tag">${chapters.length * 300}疾病主題・${chapters.length * 300}藥理主題</span></div><div class="grid">${chapters.map(c => `<button class="card" onclick="showMegaDisease('${c.id}')"><span class="card-title"><span>${c.system}</span>${icons.disease}</span><p>疾病300筆，藥理300筆，依位置、機制、檢查、治療與國考陷阱整理。</p><div class="metric"><strong>600</strong><span>主題節點</span></div></button>`).join('')}</div></div>`;
+  };
+  const oldSearch = renderSearch;
+  renderSearch = function (term) {
+    if (!term.trim()) { renderHome(); return; }
+    const t = term.toLowerCase();
+    const found = [];
+    for (const ch of chapters) {
+      const bank = window.megaBank[ch.id];
+      for (const d of bank.diseases) if ((d.name + d.exam + d.mechanism).toLowerCase().includes(t)) found.push({ title: d.name, body: `${ch.system}｜${d.exam}`, action: `showMegaDisease('${ch.id}')` });
+      for (const p of bank.pharm) if ((p.name + p.mechanism + p.trap).toLowerCase().includes(t)) found.push({ title: p.name, body: `${ch.system}｜${p.trap}`, action: `showMegaPharm('${ch.id}')` });
+      if (found.length > 80) break;
+    }
+    if (!found.length) return oldSearch(term);
+    document.getElementById('home').innerHTML = `<div class="section"><div class="section-head"><h2>大型資料庫搜尋結果</h2><span class="tag">顯示前${found.length}筆</span></div><div class="lecture-grid">${found.map(r=>`<button class="lecture-card" onclick="${r.action}"><h3>${r.title}</h3><p>${r.body}</p></button>`).join('')}</div></div>`;
+    navTo('home');
+  };
+
+  renderBody();
+  renderLecture();
+  renderDisease();
+  renderPharm();
+  renderAnki();
+  renderTasks();
+})();
+
+
+</script>
+  <script>
+/* inlined: english-enhance.js */
+(function () {
+  const prefixRoots = [
+    ['a-', 'without, lack of', '無、缺乏', 'anemia 貧血', 'a- + hem + -ia = 缺少血液能力'],
+    ['an-', 'without', '無', 'anuria 無尿', 'an- + uria = 沒有尿'],
+    ['anti-', 'against', '對抗', 'antibiotic 抗生素', 'anti-先想「對抗」'],
+    ['auto-', 'self', '自己', 'autoimmune 自體免疫', 'auto-自己攻擊自己'],
+    ['brady-', 'slow', '慢', 'bradycardia 心搏過慢', 'brady慢 + cardia心'],
+    ['tachy-', 'fast', '快', 'tachypnea 呼吸過快', 'tachy快 + pnea呼吸'],
+    ['hyper-', 'high, excessive', '高、過多', 'hypertension 高血壓', 'hyper高 + tension壓力'],
+    ['hypo-', 'low, deficient', '低、不足', 'hypoglycemia 低血糖', 'hypo低 + glyc糖 + emia血'],
+    ['peri-', 'around', '周圍', 'pericardium 心包膜', 'peri周圍 + card心'],
+    ['endo-', 'inside', '內', 'endocarditis 心內膜炎', 'endo內 + card心 + itis炎'],
+    ['epi-', 'upon', '上、表面', 'epidermis 表皮', 'epi上 + derm皮膚'],
+    ['sub-', 'under', '下', 'subcutaneous 皮下', 'sub下 + cutaneous皮膚'],
+    ['supra-', 'above', '上方', 'suprarenal 腎上腺', 'supra上 + renal腎'],
+    ['infra-', 'below', '下方', 'infrapatellar 髕骨下', 'infra下方'],
+    ['inter-', 'between', '之間', 'intercostal 肋間', 'inter之間 + cost肋'],
+    ['intra-', 'within', '內部', 'intravenous 靜脈內', 'intra內 + venous靜脈'],
+    ['extra-', 'outside', '外', 'extracellular 細胞外', 'extra外 + cellular細胞'],
+    ['trans-', 'across', '穿過、跨越', 'transfusion 輸血', 'trans跨越 + fusion注入'],
+    ['dys-', 'bad, difficult', '異常、困難', 'dyspnea 呼吸困難', 'dys困難 + pnea呼吸'],
+    ['eu-', 'good, normal', '正常', 'euthyroid 甲狀腺功能正常', 'eu正常 + thyroid甲狀腺'],
+    ['poly-', 'many', '多', 'polyuria 多尿', 'poly多 + uria尿'],
+    ['oligo-', 'few, little', '少', 'oliguria 少尿', 'oligo少 + uria尿'],
+    ['pan-', 'all', '全', 'pancytopenia 全血球低下', 'pan全 + cyto細胞 + penia少'],
+    ['hemi-', 'half', '半側', 'hemiplegia 半身癱瘓', 'hemi半 + plegia癱'],
+    ['bi-', 'two', '二', 'bilateral 雙側', 'bi二 + lateral側'],
+    ['tri-', 'three', '三', 'tricuspid 三尖瓣', 'tri三 + cuspid尖瓣'],
+    ['quadri-', 'four', '四', 'quadriplegia 四肢癱瘓', 'quadri四 + plegia癱'],
+    ['neo-', 'new', '新', 'neoplasm 新生物/腫瘤', 'neo新 + plasm形成'],
+    ['meta-', 'change, beyond', '轉變、遠端', 'metastasis 轉移', 'meta遠端 + stasis停留'],
+    ['para-', 'beside, abnormal', '旁、異常', 'parathyroid 副甲狀腺', 'para旁邊 + thyroid甲狀腺']
+  ];
+
+  const roots = [
+    ['cardi/o', 'heart', '心臟', 'cardiology 心臟學', 'cardio心 + logy學問'],
+    ['angi/o', 'vessel', '血管', 'angiography 血管攝影', 'angio血管 + graphy攝影'],
+    ['arteri/o', 'artery', '動脈', 'arteriosclerosis 動脈硬化', 'arterio動脈 + sclerosis硬化'],
+    ['ven/o', 'vein', '靜脈', 'intravenous 靜脈內', 'intra內 + ven靜脈'],
+    ['hem/o', 'blood', '血液', 'hematuria 血尿', 'hem血 + uria尿'],
+    ['erythr/o', 'red', '紅', 'erythrocyte 紅血球', 'erythro紅 + cyte細胞'],
+    ['leuk/o', 'white', '白', 'leukocyte 白血球', 'leuko白 + cyte細胞'],
+    ['thromb/o', 'clot, platelet', '血栓、血小板', 'thrombosis 血栓形成', 'thrombo血栓 + osis狀態'],
+    ['pneum/o', 'lung, air', '肺、空氣', 'pneumonia 肺炎', 'pneumo肺 + ia狀態'],
+    ['bronch/o', 'bronchus', '支氣管', 'bronchitis 支氣管炎', 'bronch支氣管 + itis炎'],
+    ['alveol/o', 'alveolus', '肺泡', 'alveolar 肺泡的', 'alveolo肺泡'],
+    ['pleur/o', 'pleura', '肋膜', 'pleuritis 肋膜炎', 'pleur肋膜 + itis炎'],
+    ['nephr/o', 'kidney', '腎臟', 'nephritis 腎炎', 'nephro腎 + itis炎'],
+    ['ren/o', 'kidney', '腎臟', 'renal 腎的', 'ren腎'],
+    ['glomerul/o', 'glomerulus', '腎小球', 'glomerulonephritis 腎絲球腎炎', 'glomerulo腎小球 + nephro腎 + itis炎'],
+    ['ur/o', 'urine', '尿', 'urology 泌尿學', 'uro尿 + logy學'],
+    ['hepat/o', 'liver', '肝臟', 'hepatitis 肝炎', 'hepato肝 + itis炎'],
+    ['chol/e', 'bile', '膽汁', 'cholecystitis 膽囊炎', 'chole膽 + cyst囊 + itis炎'],
+    ['gastr/o', 'stomach', '胃', 'gastritis 胃炎', 'gastro胃 + itis炎'],
+    ['enter/o', 'intestine', '腸', 'enteritis 腸炎', 'entero腸 + itis炎'],
+    ['col/o', 'colon', '大腸', 'colitis 大腸炎', 'colo大腸 + itis炎'],
+    ['pancreat/o', 'pancreas', '胰臟', 'pancreatitis 胰臟炎', 'pancreato胰 + itis炎'],
+    ['neur/o', 'nerve', '神經', 'neuropathy 神經病變', 'neuro神經 + pathy病'],
+    ['encephal/o', 'brain', '腦', 'encephalitis 腦炎', 'encephalo腦 + itis炎'],
+    ['myel/o', 'spinal cord, marrow', '脊髓、骨髓', 'myelopathy 脊髓病變', 'myelo脊髓 + pathy病'],
+    ['psych/o', 'mind', '心理、精神', 'psychosis 精神病症狀', 'psycho精神 + osis狀態'],
+    ['thyroid/o', 'thyroid', '甲狀腺', 'thyroiditis 甲狀腺炎', 'thyroid甲狀腺 + itis炎'],
+    ['adren/o', 'adrenal', '腎上腺', 'adrenaline 腎上腺素', 'adreno腎上腺'],
+    ['glyc/o', 'sugar', '糖', 'hyperglycemia 高血糖', 'hyper高 + glyc糖 + emia血'],
+    ['oste/o', 'bone', '骨', 'osteoporosis 骨質疏鬆', 'osteo骨 + porosis孔洞狀態'],
+    ['arthr/o', 'joint', '關節', 'arthritis 關節炎', 'arthro關節 + itis炎'],
+    ['my/o', 'muscle', '肌肉', 'myopathy 肌病變', 'myo肌肉 + pathy病'],
+    ['derm/o', 'skin', '皮膚', 'dermatitis 皮膚炎', 'derm皮膚 + itis炎'],
+    ['gynec/o', 'female', '婦科', 'gynecology 婦科學', 'gyneco女性 + logy學'],
+    ['obstetr/o', 'pregnancy', '產科', 'obstetrics 產科', 'obstetro產科'],
+    ['pedi/o', 'child', '兒童', 'pediatrics 小兒科', 'pedio兒童 + iatrics治療'],
+    ['onc/o', 'tumor', '腫瘤', 'oncology 腫瘤學', 'onco腫瘤 + logy學'],
+    ['immun/o', 'immune', '免疫', 'immunology 免疫學', 'immuno免疫 + logy學'],
+    ['seps/o', 'infection, putrefaction', '感染、敗血', 'sepsis 敗血症', 'seps感染 + is狀態'],
+    ['path/o', 'disease', '疾病', 'pathology 病理學', 'patho病 + logy學']
+  ];
+
+  const suffixes = [
+    ['-itis', 'inflammation', '發炎', 'hepatitis 肝炎', '看到 -itis 先想發炎'],
+    ['-osis', 'condition', '狀態、病態', 'thrombosis 血栓形成', 'osis是狀態'],
+    ['-emia', 'blood condition', '血液狀態', 'bacteremia 菌血症', 'emia都在血中'],
+    ['-uria', 'urine condition', '尿液狀態', 'proteinuria 蛋白尿', 'uria都在尿中'],
+    ['-pathy', 'disease', '病變', 'neuropathy 神經病變', 'pathy是病'],
+    ['-megaly', 'enlargement', '腫大', 'hepatomegaly 肝腫大', 'megaly變大'],
+    ['-penia', 'deficiency', '減少', 'leukopenia 白血球低下', 'penia變少'],
+    ['-cytosis', 'cell increase', '細胞增多', 'leukocytosis 白血球增多', 'cyto細胞 + osis狀態'],
+    ['-ectomy', 'removal', '切除', 'appendectomy 闌尾切除', 'ectomy拿掉'],
+    ['-otomy', 'incision', '切開', 'tracheotomy 氣管切開', 'otomy切開'],
+    ['-ostomy', 'new opening', '造口', 'colostomy 大腸造口', 'ostomy開新口'],
+    ['-scopy', 'viewing', '內視鏡檢查', 'colonoscopy 大腸鏡', 'scopy看'],
+    ['-graphy', 'imaging', '攝影、紀錄', 'angiography 血管攝影', 'graphy成像'],
+    ['-gram', 'record', '圖、紀錄', 'electrocardiogram 心電圖', 'gram紀錄結果'],
+    ['-lysis', 'breakdown', '分解、溶解', 'hemolysis 溶血', 'lysis裂解'],
+    ['-plegia', 'paralysis', '癱瘓', 'hemiplegia 半身癱瘓', 'plegia癱'],
+    ['-pnea', 'breathing', '呼吸', 'apnea 無呼吸', 'pnea呼吸'],
+    ['-rrhea', 'flow', '流出', 'diarrhea 腹瀉', 'rrhea流'],
+    ['-stasis', 'standing still', '停滯', 'cholestasis 膽汁鬱積', 'stasis停住'],
+    ['-genic', 'producing', '產生、來源', 'iatrogenic 醫源性', 'genic來源']
+  ];
+
+  const chainMemory = [
+    ['心血管鏈', 'cardi/o 心 → myocardium 心肌 → ischemia 缺血 → infarction 梗塞 → troponin 心肌損傷指標', 'heart muscle loses blood flow, cells die, troponin rises.'],
+    ['呼吸鏈', 'pneum/o 肺 → alveolus 肺泡 → ventilation 通氣 → perfusion 灌流 → hypoxemia 低氧血症', 'oxygen needs both air and blood at the alveolus.'],
+    ['腎臟鏈', 'nephr/o 腎 → glomerulus 腎小球 → filtration 過濾 → creatinine 肌酸酐 → GFR 腎絲球過濾率', 'creatinine rises when filtration falls.'],
+    ['肝膽鏈', 'hepat/o 肝 → bile 膽汁 → bilirubin 膽紅素 → jaundice 黃疸 → cholestasis 膽汁鬱積', 'bile flow obstruction turns bilirubin into jaundice.'],
+    ['神經鏈', 'neur/o 神經 → lesion 病灶 → localization 定位 → deficit 缺損 → stroke 中風', 'neurology starts with localization before diagnosis.'],
+    ['內分泌鏈', 'glyc/o 糖 → insulin 胰島素 → potassium 鉀 → ketoacidosis 酮酸中毒 → anion gap 陰離子間隙', 'insulin moves glucose and potassium into cells.'],
+    ['血液鏈', 'hem/o 血 → erythrocyte 紅血球 → hemoglobin 血紅素 → anemia 貧血 → MCV 平均紅血球體積', 'anemia questions start with MCV.'],
+    ['免疫鏈', 'immun/o 免疫 → antigen 抗原 → antibody 抗體 → inflammation 發炎 → sepsis 敗血症', 'infection plus organ dysfunction means sepsis.'],
+    ['肌骨鏈', 'arthr/o 關節 → synovium 滑膜 → crystal 結晶 → gout 痛風 → colchicine 秋水仙素', 'acute red hot joint: exclude infection, then crystal.'],
+    ['婦兒鏈', 'gynec/o 婦科 → hCG 人類絨毛膜促性腺激素 → ectopic pregnancy 異位妊娠 → ultrasound 超音波', 'abdominal pain in reproductive age: check hCG.'],
+    ['精神鏈', 'psych/o 精神 → mood 情緒 → mania 躁症 → psychosis 精神病症狀 → safety assessment 安全評估', 'psychiatry starts with safety and timeline.']
+  ];
+
+  const abbrev = {
+    ABG: 'arterial blood gas，動脈血液氣體分析',
+    ACS: 'acute coronary syndrome，急性冠心症',
+    ACTH: 'adrenocorticotropic hormone，促腎上腺皮質激素',
+    ADH: 'antidiuretic hormone，抗利尿激素',
+    AF: 'atrial fibrillation，心房顫動',
+    AFB: 'acid-fast bacilli，抗酸菌',
+    AKI: 'acute kidney injury，急性腎損傷',
+    ALP: 'alkaline phosphatase，鹼性磷酸酶',
+    ALT: 'alanine aminotransferase，丙胺酸轉胺酶',
+    ANA: 'antinuclear antibody，抗核抗體',
+    ARB: 'angiotensin receptor blocker，血管張力素受體阻斷劑',
+    ARDS: 'acute respiratory distress syndrome，急性呼吸窘迫症候群',
+    AST: 'aspartate aminotransferase，天門冬胺酸轉胺酶',
+    AV: 'atrioventricular，房室',
+    BNP: 'B-type natriuretic peptide，B型利鈉胜肽',
+    BUN: 'blood urea nitrogen，血中尿素氮',
+    CBC: 'complete blood count，全血球計數',
+    CK: 'creatine kinase，肌酸激酶',
+    CKD: 'chronic kidney disease，慢性腎臟病',
+    CLL: 'chronic lymphocytic leukemia，慢性淋巴性白血病',
+    CML: 'chronic myeloid leukemia，慢性骨髓性白血病',
+    CNS: 'central nervous system，中樞神經系統',
+    COPD: 'chronic obstructive pulmonary disease，慢性阻塞性肺病',
+    CRP: 'C-reactive protein，C反應蛋白',
+    CSF: 'cerebrospinal fluid，腦脊髓液',
+    CT: 'computed tomography，電腦斷層',
+    CTPA: 'CT pulmonary angiography，肺動脈電腦斷層血管攝影',
+    DIC: 'disseminated intravascular coagulation，瀰漫性血管內凝血',
+    DKA: 'diabetic ketoacidosis，糖尿病酮酸中毒',
+    DVT: 'deep vein thrombosis，深部靜脈栓塞',
+    ECG: 'electrocardiogram，心電圖',
+    EKG: 'electrocardiogram，心電圖',
+    ESR: 'erythrocyte sedimentation rate，紅血球沉降速率',
+    FEV1: 'forced expiratory volume in 1 second，一秒用力呼氣量',
+    GCS: 'Glasgow Coma Scale，格拉斯哥昏迷指數',
+    GFR: 'glomerular filtration rate，腎絲球過濾率',
+    GGT: 'gamma-glutamyl transferase，γ-麩胺醯轉移酶',
+    Hb: 'hemoglobin，血紅素',
+    HbA1c: 'glycated hemoglobin，糖化血色素',
+    HCO3: 'bicarbonate，碳酸氫根',
+    HFrEF: 'heart failure with reduced ejection fraction，射出分率降低型心衰竭',
+    HFpEF: 'heart failure with preserved ejection fraction，射出分率保留型心衰竭',
+    HIV: 'human immunodeficiency virus，人類免疫缺乏病毒',
+    INR: 'international normalized ratio，國際標準化比值',
+    IV: 'intravenous，靜脈內',
+    JVP: 'jugular venous pressure，頸靜脈壓',
+    LMN: 'lower motor neuron，下運動神經元',
+    MCA: 'middle cerebral artery，中大腦動脈',
+    MCV: 'mean corpuscular volume，平均紅血球體積',
+    MRI: 'magnetic resonance imaging，磁振造影',
+    NST: 'non-stress test，無壓力試驗',
+    PaCO2: 'arterial carbon dioxide pressure，動脈二氧化碳分壓',
+    PaO2: 'arterial oxygen pressure，動脈氧分壓',
+    PE: 'pulmonary embolism，肺栓塞',
+    PEF: 'peak expiratory flow，尖峰呼氣流速',
+    PFT: 'pulmonary function test，肺功能檢查',
+    PT: 'prothrombin time，凝血酶原時間',
+    PTT: 'partial thromboplastin time，部分凝血活酶時間',
+    RA: 'rheumatoid arthritis，類風濕性關節炎',
+    RAAS: 'renin-angiotensin-aldosterone system，腎素-血管張力素-醛固酮系統',
+    SABA: 'short-acting beta agonist，短效乙二型交感神經促效劑',
+    LABA: 'long-acting beta agonist，長效乙二型交感神經促效劑',
+    SAMA: 'short-acting muscarinic antagonist，短效抗蕈毒鹼藥',
+    LAMA: 'long-acting muscarinic antagonist，長效抗蕈毒鹼藥',
+    SGLT2: 'sodium-glucose cotransporter 2，第二型鈉-葡萄糖共同運輸蛋白',
+    SIADH: 'syndrome of inappropriate antidiuretic hormone，不適當抗利尿激素分泌症候群',
+    SLE: 'systemic lupus erythematosus，全身性紅斑性狼瘡',
+    SpO2: 'peripheral oxygen saturation，周邊血氧飽和度',
+    STEMI: 'ST-elevation myocardial infarction，ST段上升型心肌梗塞',
+    SVR: 'systemic vascular resistance，全身血管阻力',
+    TIA: 'transient ischemic attack，暫時性腦缺血發作',
+    TSH: 'thyroid-stimulating hormone，甲狀腺刺激素',
+    UMN: 'upper motor neuron，上運動神經元',
+    UTI: 'urinary tract infection，泌尿道感染',
+    VQ: 'ventilation-perfusion，通氣/灌流',
+    WBC: 'white blood cell，白血球'
+  };
+  window.medicalAbbrev = abbrev;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
+
+  window.speakMedicalEnglish = function (text) {
+    if (!('speechSynthesis' in window)) {
+      alert('此瀏覽器不支援語音朗讀。');
+      return;
+    }
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'en-US';
+    utter.rate = 0.82;
+    utter.pitch = 1;
+    speechSynthesis.speak(utter);
+  };
+
+  function speakButton(text) {
+    return `<button class="tiny-btn" onclick="speakMedicalEnglish('${esc(text).replace(/&#39;/g, "\\'")}')">▶ 發音</button>`;
+  }
+
+  function termCard(row, type) {
+    return `<div class="lecture-card">
+      <div class="section-head"><h3>${esc(row[0])}</h3>${speakButton(row[0].replace(/[/-].*$/, ''))}</div>
+      <p><strong>英文意義：</strong>${esc(row[1])}</p>
+      <p><strong>中文解析：</strong>${esc(row[2])}</p>
+      <p><strong>例字：</strong>${esc(row[3])}</p>
+      <p><strong>連鎖記憶：</strong>${esc(row[4])}</p>
+      <span class="tag">${type}</span>
+    </div>`;
+  }
+
+  function abbrevCards() {
+    return Object.entries(abbrev).map(([k, v]) => `<div class="lecture-card">
+      <div class="section-head"><h3>${esc(k)}</h3>${speakButton(k)}</div>
+      <p>${esc(v)}</p>
+    </div>`).join('');
+  }
+
+  renderEnglish = function () {
+    const chapterTerms = chapters.flatMap(ch => ch.english.map(w => [w, 'chapter keyword', '章節高頻英文', `${w}｜${ch.system}`, `先用 ${ch.system} 的位置與機制記 ${w}`]));
+    document.getElementById('english').innerHTML = `
+      <div class="section">
+        <div class="section-head"><h2>醫學英文</h2><span class="tag">${prefixRoots.length + roots.length + suffixes.length + chapterTerms.length}字根字首字尾・${Object.keys(abbrev).length}縮寫解析</span></div>
+        <div class="two-col">
+          <div class="lecture-card">
+            <h3>英文朗讀器</h3>
+            <p class="muted">輸入或貼上英文單字、片語、句子，使用瀏覽器內建語音朗讀。</p>
+            <textarea id="speechBox" style="width:100%;min-height:110px;border:1px solid var(--line);border-radius:var(--radius);padding:10px">The patient presents with acute chest pain and dyspnea. ECG and troponin should be checked immediately.</textarea>
+            <div class="hero-actions"><button class="primary" onclick="speakMedicalEnglish(document.getElementById('speechBox').value)">▶ 朗讀英文</button><button class="tiny-btn" onclick="speechSynthesis && speechSynthesis.cancel()">停止</button></div>
+          </div>
+          <div class="lecture-card">
+            <h3>連鎖記憶法</h3>
+            <p>字首定方向，字根定器官，字尾定狀態。看到專業英文先拆三層，再回到人體位置與國考機制。</p>
+            <div class="ordered-flow">${['Prefix 字首：方向/程度', 'Root 字根：器官/組織', 'Suffix 字尾：疾病/檢查/處置', 'Case 病例：把字拆回臨床', 'Exam 國考：抓陷阱與下一步'].map((x,i)=>`<div class="flow-step"><span class="step-num">${i+1}</span>${x}</div>`).join('')}</div>
+          </div>
+        </div>
+      </div>
+      <div class="section"><div class="section-head"><h2>字首 Prefix</h2><span class="tag">${prefixRoots.length}個</span></div><div class="lecture-grid">${prefixRoots.map(r=>termCard(r, 'Prefix')).join('')}</div></div>
+      <div class="section"><div class="section-head"><h2>字根 Root</h2><span class="tag">${roots.length}個</span></div><div class="lecture-grid">${roots.map(r=>termCard(r, 'Root')).join('')}</div></div>
+      <div class="section"><div class="section-head"><h2>字尾 Suffix</h2><span class="tag">${suffixes.length}個</span></div><div class="lecture-grid">${suffixes.map(r=>termCard(r, 'Suffix')).join('')}</div></div>
+      <div class="section"><div class="section-head"><h2>章節英文關鍵字</h2><span class="tag">雙語呈現</span></div><div class="lecture-grid">${chapterTerms.map(r=>termCard(r, 'Chapter')).join('')}</div></div>
+      <div class="section"><div class="section-head"><h2>連鎖記憶 Chains</h2><span class="tag">${chainMemory.length}條</span></div><div class="lecture-grid">${chainMemory.map(c=>`<div class="lecture-card"><div class="section-head"><h3>${esc(c[0])}</h3>${speakButton(c[2])}</div><p><strong>記憶鏈：</strong>${esc(c[1])}</p><p><strong>English sentence：</strong>${esc(c[2])}</p></div>`).join('')}</div></div>
+      <div class="section"><div class="section-head"><h2>專業英文縮寫解析</h2><span class="tag">全 APP hover 解析</span></div><div class="lecture-grid">${abbrevCards()}</div></div>`;
+    annotateMedicalAbbrev(document.getElementById('english'));
+  };
+
+  function annotateMedicalAbbrev(root = document.body) {
+    if (!root || !root.querySelectorAll) return;
+    const keys = Object.keys(abbrev).sort((a, b) => b.length - a.length);
+    const re = new RegExp(`\\b(${keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'g');
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const p = node.parentElement;
+        if (!p || ['SCRIPT', 'STYLE', 'TEXTAREA', 'ABBR', 'BUTTON'].includes(p.tagName)) return NodeFilter.FILTER_REJECT;
+        return re.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.slice(0, 1200).forEach(node => {
+      re.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      node.nodeValue.replace(re, (m, _g, offset) => {
+        if (offset > last) frag.appendChild(document.createTextNode(node.nodeValue.slice(last, offset)));
+        const ab = document.createElement('abbr');
+        ab.textContent = m;
+        ab.title = abbrev[m];
+        ab.className = 'abbr-tip';
+        frag.appendChild(ab);
+        last = offset + m.length;
+      });
+      if (last < node.nodeValue.length) frag.appendChild(document.createTextNode(node.nodeValue.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+  window.annotateMedicalAbbrev = annotateMedicalAbbrev;
+
+  const style = document.createElement('style');
+  style.textContent = '.abbr-tip{border-bottom:1px dotted #0f8b8d;color:#075e60;font-weight:800;cursor:help}.abbr-tip::after{content:"";}';
+  document.head.appendChild(style);
+
+  function wrapRender(fnName) {
+    const old = window[fnName] || eval(`typeof ${fnName} !== "undefined" ? ${fnName} : undefined`);
+    if (typeof old !== 'function') return;
+    window[fnName] = function (...args) {
+      const out = old.apply(this, args);
+      annotateMedicalAbbrev(document.body);
+      return out;
+    };
+    try { eval(`${fnName} = window[fnName]`); } catch (_e) {}
+  }
+  ['renderHome', 'renderBody', 'renderLecture', 'renderDisease', 'renderPharm', 'renderPbl', 'renderAnki', 'renderEnglish', 'renderWrong', 'renderTasks'].forEach(wrapRender);
+
+  renderEnglish();
+  annotateMedicalAbbrev(document.body);
+})();
+
+
+</script>
+  <script>
+/* inlined: english-lecture-fix.js */
+(function () {
+  const prefix = [
+    ['hyper-', 'high / excessive', '高、過多', 'hypertension 高血壓'], ['hypo-', 'low / deficient', '低、不足', 'hypoxemia 低氧血症'], ['tachy-', 'fast', '快', 'tachypnea 呼吸過快'], ['brady-', 'slow', '慢', 'bradycardia 心搏過慢'], ['dys-', 'bad / difficult', '異常、困難', 'dyspnea 呼吸困難'], ['a- / an-', 'without', '無、缺乏', 'apnea 無呼吸'], ['anti-', 'against', '對抗', 'antibiotic 抗生素'], ['auto-', 'self', '自己', 'autoimmune 自體免疫'], ['endo-', 'inside', '內', 'endocarditis 心內膜炎'], ['peri-', 'around', '周圍', 'pericardium 心包膜'], ['intra-', 'within', '內部', 'intravenous 靜脈內'], ['extra-', 'outside', '外部', 'extracellular 細胞外'], ['poly-', 'many', '多', 'polyuria 多尿'], ['oligo-', 'few', '少', 'oliguria 少尿'], ['pan-', 'all', '全', 'pancytopenia 全血球低下']
+  ];
+  const roots = [
+    ['cardi/o', 'heart', '心臟', 'cardiology 心臟學'], ['angi/o', 'vessel', '血管', 'angiography 血管攝影'], ['hem/o', 'blood', '血液', 'hematuria 血尿'], ['pneum/o', 'lung / air', '肺、空氣', 'pneumonia 肺炎'], ['bronch/o', 'bronchus', '支氣管', 'bronchitis 支氣管炎'], ['alveol/o', 'alveolus', '肺泡', 'alveolar 肺泡的'], ['nephr/o', 'kidney', '腎臟', 'nephritis 腎炎'], ['ur/o', 'urine', '尿', 'urology 泌尿學'], ['hepat/o', 'liver', '肝臟', 'hepatitis 肝炎'], ['chol/e', 'bile', '膽汁', 'cholestasis 膽汁鬱積'], ['gastr/o', 'stomach', '胃', 'gastritis 胃炎'], ['enter/o', 'intestine', '腸', 'enteritis 腸炎'], ['neur/o', 'nerve', '神經', 'neuropathy 神經病變'], ['encephal/o', 'brain', '腦', 'encephalitis 腦炎'], ['glyc/o', 'sugar', '糖', 'hyperglycemia 高血糖'], ['thyroid/o', 'thyroid', '甲狀腺', 'thyroiditis 甲狀腺炎'], ['oste/o', 'bone', '骨', 'osteoporosis 骨質疏鬆'], ['arthr/o', 'joint', '關節', 'arthritis 關節炎'], ['derm/o', 'skin', '皮膚', 'dermatitis 皮膚炎'], ['psych/o', 'mind', '精神、心理', 'psychosis 精神病症狀']
+  ];
+  const suffix = [
+    ['-itis', 'inflammation', '發炎', 'hepatitis 肝炎'], ['-osis', 'condition', '狀態、病態', 'thrombosis 血栓形成'], ['-emia', 'blood condition', '血液狀態', 'hypoxemia 低氧血症'], ['-uria', 'urine condition', '尿液狀態', 'proteinuria 蛋白尿'], ['-pathy', 'disease', '病變', 'neuropathy 神經病變'], ['-penia', 'deficiency', '減少', 'leukopenia 白血球低下'], ['-megaly', 'enlargement', '腫大', 'hepatomegaly 肝腫大'], ['-scopy', 'viewing', '內視鏡檢查', 'colonoscopy 大腸鏡'], ['-graphy', 'imaging', '攝影、紀錄', 'angiography 血管攝影'], ['-pnea', 'breathing', '呼吸', 'dyspnea 呼吸困難']
+  ];
+  const chains = [
+    ['呼吸英文鏈', 'pneum/o 肺 → alveolus 肺泡 → ventilation 通氣 → perfusion 灌流 → hypoxemia 低氧血症', 'oxygen needs both ventilation and perfusion.'],
+    ['心血管英文鏈', 'cardi/o 心 → myocardium 心肌 → ischemia 缺血 → infarction 梗塞 → troponin 上升', 'ischemia injures myocardium and raises troponin.'],
+    ['腎臟英文鏈', 'nephr/o 腎 → glomerulus 腎小球 → filtration 過濾 → creatinine 肌酸酐 → GFR 下降', 'creatinine rises when GFR falls.'],
+    ['感染英文鏈', 'immun/o 免疫 → pathogen 病原 → inflammation 發炎 → sepsis 敗血症 → lactate 乳酸', 'sepsis means infection plus organ dysfunction.'],
+    ['神經英文鏈', 'neur/o 神經 → lesion 病灶 → localization 定位 → deficit 缺損 → stroke 中風', 'localization comes before diagnosis in neurology.']
+  ];
+  const keywordZh = {
+    ventilation:'通氣', perfusion:'灌流', wheezing:'喘鳴', hypoxemia:'低氧血症', compliance:'順應性', preload:'前負荷', afterload:'後負荷', contractility:'收縮力', ischemia:'缺血', filtration:'過濾', reabsorption:'再吸收', secretion:'分泌', creatinine:'肌酸酐', osmolarity:'滲透壓', stroke:'中風', seizure:'癲癇發作', aphasia:'失語', jaundice:'黃疸', pancreatitis:'胰臟炎', melena:'黑便', ketoacidosis:'酮酸中毒', hypoglycemia:'低血糖', thrombosis:'血栓形成', sepsis:'敗血症', culture:'培養', arthritis:'關節炎', preeclampsia:'子癲前症', psychosis:'精神病症狀'
+  };
+  function esc(s){return String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function say(text){return `<button class="tiny-btn" onclick='speakMedicalEnglish(${JSON.stringify(text)})'>▶ 發音</button>`;}
+  function termTable(title, rows){return `<div class="section"><div class="section-head"><h2>${title}</h2><span class="tag">雙語解析</span></div><div class="table-wrap"><table class="compare-table"><thead><tr><th>英文</th><th>English meaning</th><th>中文</th><th>例字</th><th>發音</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${esc(r[0])}</strong></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td>${say(r[0].replace(/[\/\-].*/,''))}</td></tr>`).join('')}</tbody></table></div></div>`;}
+  function keywordCards(ch){
+    return `<div class="lecture-grid">${ch.english.map(w=>`<div class="lecture-card"><div class="section-head"><h3>${esc(w)}</h3>${say(w)}</div><p><strong>中文：</strong>${esc(keywordZh[w] || '章節專業關鍵字，請放回本章位置與機制理解。')}</p><p><strong>記法：</strong>先發音，再拆字根，最後放回 ${esc(ch.system)} 的病例題。</p></div>`).join('')}</div>`;
+  }
+  function fullEnglishHtml(ch){
+    const abbr = window.medicalAbbrev || {};
+    const abbrRows = Object.entries(abbr).slice(0, 80).map(([k,v])=>`<tr><td><strong>${esc(k)}</strong></td><td>${esc(v)}</td><td>${say(k)}</td></tr>`).join('');
+    return `<div class="english-classroom">
+      <div class="section"><div class="section-head"><h2>醫學英文教室｜${esc(ch.system)}</h2><span class="tag">字根字首・中文翻譯・連鎖記憶・英文發音</span></div>
+        <div class="two-col"><div class="lecture-card"><h3>英文朗讀器</h3><textarea id="lectureSpeechBox" style="width:100%;min-height:100px;border:1px solid var(--line);border-radius:var(--radius);padding:10px">${esc(ch.english.join(' '))}</textarea><div class="hero-actions"><button class="primary" onclick="speakMedicalEnglish(document.getElementById('lectureSpeechBox').value)">▶ 朗讀英文</button><button class="tiny-btn" onclick="speechSynthesis && speechSynthesis.cancel()">停止</button></div></div><div class="lecture-card"><h3>連鎖記憶規則</h3><p>字首定方向，字根定器官，字尾定狀態。英文不是背翻譯，是把單字拆回人體位置、疾病機制與國考下一步。</p></div></div>
+      </div>
+      <div class="section"><div class="section-head"><h2>本章關鍵字雙語卡</h2><span class="tag">點發音</span></div>${keywordCards(ch)}</div>
+      ${termTable('字首 Prefix', prefix)}${termTable('字根 Root', roots)}${termTable('字尾 Suffix', suffix)}
+      <div class="section"><div class="section-head"><h2>連鎖記憶 Chains</h2><span class="tag">英文句子可發音</span></div><div class="lecture-grid">${chains.map(c=>`<div class="lecture-card"><div class="section-head"><h3>${esc(c[0])}</h3>${say(c[2])}</div><p><strong>記憶鏈：</strong>${esc(c[1])}</p><p><strong>English：</strong>${esc(c[2])}</p></div>`).join('')}</div></div>
+      <div class="section"><div class="section-head"><h2>專業英文縮寫中文解析</h2><span class="tag">${Object.keys(abbr).length}個</span></div><div class="table-wrap"><table class="compare-table"><thead><tr><th>縮寫</th><th>英文 + 中文解析</th><th>發音</th></tr></thead><tbody>${abbrRows}</tbody></table></div></div>
+    </div>`;
+  }
+  window.fullMedicalEnglishHtml = fullEnglishHtml;
+  const oldChapterPageEnglishFix = chapterPage;
+  chapterPage = function(ch, i){
+    if (i === 8) return fullEnglishHtml(ch);
+    return oldChapterPageEnglishFix(ch, i);
+  };
+  renderLecture();
+})();
+
+</script>
+  <script>
+/* inlined: pbl-answers.js */
+(function () {
+  function answerFor(ch, field) {
+    const firstDisease = (diseases.find(d => d.chapter === ch.id) || {}).name || (ch.diseases && ch.diseases[0]) || ch.system;
+    const firstDrug = (drugs.find(d => d.chapter === ch.id) || {}).name || (ch.drugs && ch.drugs[0]) || '依機制選藥';
+    const labs = (window.labs || []).filter(l => l.chapter === ch.id).slice(0, 3).map(l => l.name).join('、') || '生命徵象、基礎檢驗、影像或功能測試';
+    const map = {
+      '位置': `${ch.location}。本病例先定位在「${ch.system}」，再看是否牽涉血管、器官功能、代謝或急症危險徵象。`,
+      '功能': `${ch.system}的核心功能是：${ch.concepts.join('、')}。題幹中異常表現代表這些功能開始失衡。`,
+      '正常生理': `正常流程：${ch.flow.join(' → ')}。先把正常路徑畫出來，才知道病在哪一段斷掉。`,
+      '失衡機制': `失衡鏈：${ch.causality.join(' → ')}。這條因果鏈解釋為什麼會出現病例中的症狀與檢查異常。`,
+      '症狀': `病例症狀要回到機制解釋：疼痛、喘、發燒、意識改變、出血、水腫、少尿或功能下降，都不是單獨背答案，而是器官功能失衡的結果。`,
+      '檢查': `優先檢查：${labs}。先做能排除危險的檢查，再做能確認診斷的檢查。`,
+      '診斷': `最可能診斷方向：${firstDisease} 或同系統急症。診斷不是只看一個字，而是由位置、時間軸、危險徵象與關鍵檢驗共同決定。`,
+      '治療': `治療原則：先穩定 ABC、生命徵象與器官灌流，再針對病因治療；本章常連到 ${firstDrug}，但要先確認禁忌與監測。`,
+      '追蹤': `追蹤重點：症狀是否改善、生命徵象是否穩定、關鍵檢驗是否回落、藥物副作用、併發症預防與再次發作風險。`
+    };
+    return map[field] || `${field}：依${ch.system}的位置、功能、機制、檢查與治療推理。`;
+  }
+
+  function answerCards(ch, fields) {
+    return `<div class="ordered-flow">${fields.map((f, i) => `<div class="flow-step"><span class="step-num">${i + 1}</span><span><strong>${f}</strong><br>${answerFor(ch, f)}</span></div>`).join('')}</div>`;
+  }
+
+  renderPbl = function () {
+    const ch = chapters.find(c => c.id === activeChapter) || chapters[0];
+    const fields = ['位置','功能','正常生理','失衡機制','症狀','檢查','診斷','治療','追蹤'];
+    document.getElementById('pbl').innerHTML = `
+      <div class="section">
+        <div class="section-head"><h2>PBL推理｜直接答案版</h2><div class="chips">${chapters.map(c=>`<button class="chip ${c.id===activeChapter?'active':''}" onclick="activeChapter='${c.id}';renderPbl()">${c.system}</button>`).join('')}</div></div>
+        <div class="two-col">
+          <div>
+            <h3>病例</h3>
+            <p class="lecture-card">${ch.case}</p>
+            <h3>標準答案</h3>
+            ${answerCards(ch, fields)}
+          </div>
+          <div>
+            <h3>推理提示</h3>
+            ${abilityBlock('病例不是猜診斷','先定位再推理','位置 → 功能 → 正常 → 失衡 → 檢查 → 診斷 → 治療','看到病例能完整說明')}
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-head"><h2>可編輯答案稿</h2><span class="tag">已預填</span></div>
+        <div class="case-ladder">${fields.map(f=>`<label>${f}<textarea oninput="state.caseNotes['${ch.id}-${f}']=this.value;save()">${state.caseNotes[ch.id+'-'+f] || answerFor(ch, f)}</textarea></label>`).join('')}</div>
+      </div>`;
+    if (window.annotateMedicalAbbrev) annotateMedicalAbbrev(document.getElementById('pbl'));
+  };
+
+  renderPbl();
+})();
+
+</script>
+  <script>
+/* inlined: disease-deep.js */
+(function () {
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
+
+  function chapterOf(id) {
+    return chapters.find(c => c.id === id) || chapters[0];
+  }
+
+  function diseaseRows(chapterId) {
+    const base = diseases.filter(d => d.chapter === chapterId);
+    if (base.length) return base;
+    const bank = window.megaBank && window.megaBank[chapterId];
+    return bank ? bank.diseases.slice(0, 60) : [];
+  }
+
+  function compact(text, fallback) {
+    return esc(text || fallback || '依題幹線索回到位置、功能、機制、檢查與治療推理。');
+  }
+
+  function mindMap(d, ch) {
+    const items = [
+      ['核心', d.name],
+      ['位置', ch.location],
+      ['正常', d.normal],
+      ['病因', d.cause],
+      ['機制', d.mechanism],
+      ['症狀', d.symptoms],
+      ['檢查', d.tests],
+      ['治療', d.treatment],
+      ['國考', d.exam]
+    ];
+    return `<div class="mindmap disease-mindmap">${items.map(x => `<span><b>${esc(x[0])}</b><small>${compact(x[1])}</small></span>`).join('')}</div>`;
+  }
+
+  function diffTable(d, ch) {
+    const siblings = diseases.filter(x => x.chapter === ch.id && x.name !== d.name).slice(0, 3);
+    const rows = [
+      [d.name, d.mechanism, d.symptoms, d.tests, d.treatment, d.exam],
+      ...siblings.map(s => [s.name, s.mechanism, s.symptoms, s.tests, s.treatment, s.exam])
+    ];
+    if (rows.length === 1) {
+      rows.push(
+        [`相似急症`, `${ch.concepts[0]}快速失衡`, '症狀急、生命徵象不穩', '先排危險檢查', '先穩定再治病因', '先處理會死的'],
+        [`慢性相似病`, `${ch.concepts[1] || ch.concepts[0]}長期失衡`, '症狀慢、反覆或漸進', '追蹤趨勢', '長期控制與預防', '看時間軸']
+      );
+    }
+    return `<div class="table-wrap"><table class="compare-table">
+      <thead><tr><th>疾病</th><th>機制差異</th><th>症狀差異</th><th>檢查差異</th><th>治療差異</th><th>國考辨識點</th></tr></thead>
+      <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${compact(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+
+  function tips(d, ch) {
+    const name = d.name.replace(/｜.*/, '');
+    return `<div class="ordered-flow">
+      <div class="flow-step"><span class="step-num">1</span><span><strong>一眼定位</strong><br>看到 ${esc(name)}，先問病灶在 ${esc(ch.location)} 的哪一段。</span></div>
+      <div class="flow-step"><span class="step-num">2</span><span><strong>一句機制</strong><br>${compact(d.mechanism)}</span></div>
+      <div class="flow-step"><span class="step-num">3</span><span><strong>三個線索</strong><br>症狀、檢查、時間軸一起看，不用單一關鍵字猜答案。</span></div>
+      <div class="flow-step"><span class="step-num">4</span><span><strong>第一步處置</strong><br>先排除危險徵象，再決定確認診斷或立即治療。</span></div>
+      <div class="flow-step"><span class="step-num">5</span><span><strong>背誦口訣</strong><br>位-功-因-症-檢-治-考：位置、功能、因果、症狀、檢查、治療、考點。</span></div>
+    </div>`;
+  }
+
+  function diseaseDeepCard(d, ch, idx) {
+    return `<div class="lecture-card disease-deep-card">
+      <div class="section-head"><h3>${idx + 1}. ${esc(d.name)}</h3><span class="tag">${esc(ch.system)}</span></div>
+      <h3>核心內容心智圖</h3>
+      ${mindMap(d, ch)}
+      <h3>差異性比較表</h3>
+      ${diffTable(d, ch)}
+      <h3>好背誦、好運用秘訣</h3>
+      ${tips(d, ch)}
+    </div>`;
+  }
+
+  window.renderDiseaseDeepCards = function (chapterId, limit) {
+    const ch = chapterOf(chapterId || activeChapter);
+    const rows = diseaseRows(ch.id).slice(0, limit || 120);
+    return `<div class="section-head"><h2>${esc(ch.system)}｜疾病完整內容呈現</h2><span class="tag">${rows.length}個疾病・心智圖・差異表・背誦秘訣</span></div>
+      <div class="lecture-grid">${rows.map((d, i) => diseaseDeepCard(d, ch, i)).join('')}</div>`;
+  };
+
+  renderDiseaseCards = function (chapter) {
+    return renderDiseaseDeepCards(chapter || activeChapter || chapters[0].id, chapter ? 120 : 160);
+  };
+
+  window.showMegaDisease = function (id) {
+    activeChapter = id;
+    document.getElementById('disease').innerHTML = `<div class="section"><div class="section-head"><h2>疾病地圖｜完整內容呈現</h2><span class="tag">心智圖・差異表・背誦秘訣</span></div><div class="chips">${chapters.map(c => `<button class="chip ${c.id===id?'active':''}" onclick="showMegaDisease('${c.id}')">${esc(c.system)}</button>`).join('')}</div></div><div class="section">${renderDiseaseDeepCards(id, 160)}</div>`;
+    navTo('disease');
+    if (window.annotateMedicalAbbrev) annotateMedicalAbbrev(document.getElementById('disease'));
+  };
+
+  const oldDailyContentDiseaseDeep = dailyContent;
+  dailyContent = function (ch = chapters.find(c => c.id === activeChapter)) {
+    return `${oldDailyContentDiseaseDeep(ch)}<div class="section"><h2>${esc(ch.system)}｜疾病節點完整呈現</h2>${renderDiseaseDeepCards(ch.id, 80)}</div>`;
+  };
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .disease-mindmap span{align-content:start;min-height:112px}
+    .disease-mindmap small{display:block;margin-top:6px;color:#475467;font-weight:600;line-height:1.45}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff}
+    .compare-table{width:100%;border-collapse:collapse;min-width:860px;font-size:14px}
+    .compare-table th,.compare-table td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:10px;vertical-align:top;line-height:1.55}
+    .compare-table th{background:#eef6ff;color:#172033;text-align:left;font-weight:900}
+    .compare-table tr:last-child td{border-bottom:0}
+    .disease-deep-card{display:grid;gap:12px}
+  `;
+  document.head.appendChild(style);
+
+  renderDisease();
+  renderTasks();
+})();
+
+</script>
+  <script>
+/* inlined: pbl-examples.js */
+(function () {
+  const presentations = ['胸痛冒冷汗','呼吸困難','發燒意識混亂','腹痛嘔吐','少尿水腫','突然單側無力','頭痛抽搐','疲倦蒼白','關節紅腫熱痛','孕期頭痛高血壓','心悸失眠','黃疸茶色尿','咳嗽咳痰','體重下降夜汗','自殺意念'];
+  const contexts = ['急診','門診','住院病房','加護病房','夜間急診','術後','老人照護','孕婦門診','兒科急診','社區感染','慢性病追蹤','健康檢查','用藥後','免疫低下','運動後'];
+  const redFlags = ['低血壓','低血氧','高燒','意識改變','劇烈疼痛','少尿','持續出血','休克指標','神經學缺損','嚴重電解質異常'];
+
+  function pick(xs, i) { return xs[i % xs.length]; }
+  function chDisease(ch, i) {
+    const rows = diseases.filter(d => d.chapter === ch.id);
+    return rows[i % rows.length] || { name: pick(ch.diseases || [ch.system], i), mechanism: ch.causality.join(' → '), symptoms: pick(presentations, i), tests: '生命徵象、基礎檢驗、影像或功能測試', treatment: '先穩定生命徵象，再針對病因治療', exam: ch.exam.join('；') };
+  }
+  function chDrug(ch, i) {
+    const rows = drugs.filter(d => d.chapter === ch.id);
+    return rows[i % rows.length] || { name: pick(ch.drugs || ['依機制選藥'], i), mechanism: '依作用位置與病理生理選擇治療', trap: '先確認禁忌與監測' };
+  }
+  function chLabs(ch, i) {
+    const rows = (window.labs || []).filter(l => l.chapter === ch.id).slice(i % 5, i % 5 + 3).map(l => l.name);
+    return rows.length ? rows.join('、') : '生命徵象、CBC、電解質、影像、功能檢查';
+  }
+
+  function makeCase(ch, i) {
+    const d = chDisease(ch, i);
+    const drug = chDrug(ch, i);
+    const context = pick(contexts, i);
+    const symptom = pick(presentations, i + chapters.indexOf(ch));
+    const red = pick(redFlags, i);
+    const labs = chLabs(ch, i);
+    const age = 18 + ((i * 7) % 70);
+    const sex = i % 2 ? '女性' : '男性';
+    return {
+      no: i + 1,
+      title: `${ch.system} PBL ${i + 1}｜${d.name}`,
+      stem: `${context}：${age}歲${sex}主訴${symptom}，合併${red}。題目要求用${ch.system}世界模型推理，不是直接猜診斷。`,
+      disease: d,
+      drug,
+      labs,
+      answers: {
+        '位置': `${ch.location}。先把病例放回${ch.system}，再定位到最可能失衡的器官、組織或功能路徑。`,
+        '功能': `${ch.concepts.join('、')}。本病例的症狀代表其中一個或多個功能失衡。`,
+        '正常生理': `正常流程是：${ch.flow.join(' → ')}。先畫正常流程，才能看出斷點。`,
+        '失衡機制': `${d.mechanism || ch.causality.join(' → ')}。把題幹線索接到因果鏈，而不是背疾病名稱。`,
+        '症狀': `${d.symptoms || symptom}。症狀要解釋成位置與功能失衡的結果。`,
+        '檢查': `優先：${labs}。先排除會致命的危險，再用較特異檢查確認。`,
+        '診斷': `最可能方向：${d.name}。診斷由位置、時間軸、危險徵象、檢驗和治療反應共同支持。`,
+        '治療': `先穩定 ABC 與生命徵象，再依病因治療；常連結藥物/處置：${drug.name}。注意：${drug.trap || '禁忌與監測'}。`,
+        '追蹤': `追蹤症狀、生命徵象、${labs}、治療副作用、復發風險與併發症。`
+      },
+      exam: `${d.exam || ch.exam.join('；')}；PBL 考點是先定位、再機制、再下一步。`,
+      memory: `口訣：位-功-常-失-症-檢-診-治-追。看到${d.name}先用這九格填滿。`
+    };
+  }
+
+  window.pblExamples = Object.fromEntries(chapters.map(ch => [ch.id, Array.from({ length: 300 }, (_, i) => makeCase(ch, i))]));
+
+  function answerFlow(ex) {
+    const fields = ['位置','功能','正常生理','失衡機制','症狀','檢查','診斷','治療','追蹤'];
+    return `<div class="ordered-flow">${fields.map((f, i) => `<div class="flow-step"><span class="step-num">${i + 1}</span><span><strong>${f}</strong><br>${ex.answers[f]}</span></div>`).join('')}</div>`;
+  }
+
+  function caseCard(ex) {
+    return `<div class="lecture-card pbl-example-card">
+      <div class="section-head"><h3>${ex.no}. ${ex.title}</h3><span class="tag">直接答案</span></div>
+      <p><strong>病例：</strong>${ex.stem}</p>
+      <h3>九步標準答案</h3>
+      ${answerFlow(ex)}
+      <h3>國考考點</h3>
+      <p>${ex.exam}</p>
+      <h3>好背誦秘訣</h3>
+      <p>${ex.memory}</p>
+    </div>`;
+  }
+
+  window.renderPblExamples = function (chapterId, limit = 300) {
+    const ch = chapters.find(c => c.id === chapterId) || chapters[0];
+    const rows = window.pblExamples[ch.id].slice(0, limit);
+    return `<div class="section-head"><h2>${ch.system}｜300個PBL推理範例</h2><span class="tag">${rows.length}例・直接答案</span></div><div class="lecture-grid">${rows.map(caseCard).join('')}</div>`;
+  };
+
+  window.showPblExamples = function (id) {
+    activeChapter = id;
+    document.getElementById('pbl').innerHTML = `
+      <div class="section">
+        <div class="section-head"><h2>PBL推理｜300範例直接答案庫</h2><span class="tag">每模組300例</span></div>
+        <div class="chips">${chapters.map(c => `<button class="chip ${c.id===id?'active':''}" onclick="showPblExamples('${c.id}')">${c.system}</button>`).join('')}</div>
+      </div>
+      <div class="section">${renderPblExamples(id, 300)}</div>`;
+    navTo('pbl');
+    if (window.annotateMedicalAbbrev) annotateMedicalAbbrev(document.getElementById('pbl'));
+  };
+
+  renderPbl = function () {
+    showPblExamples(activeChapter || chapters[0].id);
+  };
+
+  const oldDailyPbl = dailyContent;
+  dailyContent = function (ch = chapters.find(c => c.id === activeChapter)) {
+    return `${oldDailyPbl(ch)}<div class="section"><h2>${ch.system}｜PBL推理範例</h2>${renderPblExamples(ch.id, 40)}</div>`;
+  };
+
+  const style = document.createElement('style');
+  style.textContent = '.pbl-example-card{display:grid;gap:10px}.pbl-example-card .ordered-flow{margin-top:0}';
+  document.head.appendChild(style);
+
+  renderPbl();
+  renderTasks();
+})();
+
+</script>
+  <script>
+/* inlined: english-more.js */
+(function () {
+  const moreWords = [
+    ['dyspnea', '呼吸困難', 'dys-困難 + -pnea呼吸', 'The patient has dyspnea on exertion.'],
+    ['tachypnea', '呼吸過快', 'tachy-快 + -pnea呼吸', 'Tachypnea may indicate respiratory distress.'],
+    ['apnea', '無呼吸', 'a-無 + -pnea呼吸', 'Sleep apnea causes intermittent hypoxemia.'],
+    ['hypoxemia', '低氧血症', 'hypo-低 + ox氧 + -emia血液狀態', 'Hypoxemia should be corrected promptly.'],
+    ['hypercapnia', '高碳酸血症', 'hyper-高 + capnia二氧化碳', 'COPD exacerbation may cause hypercapnia.'],
+    ['wheezing', '喘鳴', '氣道狹窄造成的哮鳴音', 'Wheezing improves after bronchodilator therapy.'],
+    ['crackles', '濕囉音', '肺泡或間質液體造成的爆裂音', 'Crackles suggest pulmonary edema or pneumonia.'],
+    ['perfusion', '灌流', 'per-穿過 + fusion流入', 'Poor perfusion leads to lactic acidosis.'],
+    ['ischemia', '缺血', '組織血流不足', 'Myocardial ischemia causes chest pain.'],
+    ['infarction', '梗塞', '缺血後組織壞死', 'STEMI is a type of myocardial infarction.'],
+    ['arrhythmia', '心律不整', 'a-異常 + rhythm節律', 'Atrial fibrillation is a common arrhythmia.'],
+    ['murmur', '心雜音', '瓣膜或血流異常造成聲音', 'A systolic murmur may indicate valve disease.'],
+    ['edema', '水腫', '組織間液增加', 'Peripheral edema is common in heart failure.'],
+    ['oliguria', '少尿', 'oligo-少 + -uria尿', 'Oliguria suggests poor renal perfusion.'],
+    ['anuria', '無尿', 'an-無 + -uria尿', 'Anuria is a dangerous sign in AKI.'],
+    ['proteinuria', '蛋白尿', 'protein蛋白 + -uria尿', 'Proteinuria suggests glomerular injury.'],
+    ['hematuria', '血尿', 'hem血 + -uria尿', 'Hematuria requires urinary tract evaluation.'],
+    ['azotemia', '氮血症', 'azot含氮廢物 + -emia血', 'Azotemia can occur in renal failure.'],
+    ['jaundice', '黃疸', '膽紅素上升造成皮膚眼白變黃', 'Jaundice may result from biliary obstruction.'],
+    ['melena', '黑便', '上消化道出血常見表現', 'Melena suggests upper gastrointestinal bleeding.'],
+    ['hematemesis', '吐血', 'hemat血 + emesis嘔吐', 'Hematemesis needs urgent evaluation.'],
+    ['ascites', '腹水', '腹腔液體堆積', 'Ascites is a complication of cirrhosis.'],
+    ['encephalopathy', '腦病變', 'encephalo腦 + pathy病', 'Hepatic encephalopathy causes confusion.'],
+    ['seizure', '癲癇發作', '異常同步神經放電', 'A seizure can be provoked by hyponatremia.'],
+    ['aphasia', '失語', 'a-缺乏 + phasia語言', 'Aphasia suggests dominant hemisphere stroke.'],
+    ['hemiparesis', '半側無力', 'hemi半側 + paresis無力', 'Hemiparesis localizes to motor pathways.'],
+    ['syncope', '暈厥', '短暫意識喪失', 'Syncope may be cardiac or neurologic.'],
+    ['delirium', '譫妄', '急性注意力與意識波動', 'Delirium often indicates acute illness.'],
+    ['sepsis', '敗血症', '感染合併器官功能障礙', 'Sepsis requires early antibiotics.'],
+    ['bacteremia', '菌血症', 'bacter細菌 + -emia血', 'Blood cultures can detect bacteremia.'],
+    ['cellulitis', '蜂窩性組織炎', 'cellul皮下組織 + -itis炎', 'Cellulitis causes erythema and swelling.'],
+    ['arthritis', '關節炎', 'arthr關節 + -itis炎', 'Arthritis may be infectious or autoimmune.'],
+    ['synovitis', '滑膜炎', 'synov滑膜 + -itis炎', 'Synovitis causes joint swelling.'],
+    ['osteoporosis', '骨質疏鬆', 'osteo骨 + porosis多孔狀態', 'Osteoporosis increases fracture risk.'],
+    ['preeclampsia', '子癲前症', '妊娠高血壓合併器官侵犯', 'Preeclampsia can progress to seizure.'],
+    ['ectopic pregnancy', '異位妊娠', '受精卵著床在子宮腔外', 'Ectopic pregnancy causes abdominal pain and bleeding.'],
+    ['mania', '躁症', '情緒高昂、睡眠需求下降', 'Mania changes antidepressant strategy.'],
+    ['psychosis', '精神病症狀', '妄想、幻覺或現實感受損', 'Psychosis requires safety assessment.'],
+    ['withdrawal', '戒斷', '停止物質後出現生理心理症狀', 'Alcohol withdrawal can cause seizures.']
+  ];
+  const extraAbbrev = {
+    ACEi: 'angiotensin-converting enzyme inhibitor，血管張力素轉換酶抑制劑',
+    ARNI: 'angiotensin receptor-neprilysin inhibitor，血管張力素受體-腦啡肽酶抑制劑',
+    CXR: 'chest X-ray，胸部X光',
+    Echo: 'echocardiography，心臟超音波',
+    SGLT2i: 'SGLT2 inhibitor，第二型鈉-葡萄糖共同運輸蛋白抑制劑',
+    P2Y12: 'P2Y12 receptor inhibitor，P2Y12血小板受體抑制劑',
+    BNP: 'B-type natriuretic peptide，B型利鈉胜肽',
+    STEMI: 'ST-elevation myocardial infarction，ST段上升型心肌梗塞',
+    ECG: 'electrocardiogram，心電圖',
+    Troponin: 'troponin，肌鈣蛋白/心肌損傷指標',
+    Beta: 'beta blocker，乙型交感神經阻斷劑'
+  };
+  window.medicalAbbrev = Object.assign({}, window.medicalAbbrev || {}, extraAbbrev);
+
+  function esc(s){return String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function speak(text){return `<button class="tiny-btn" onclick='speakMedicalEnglish(${JSON.stringify(text)})'>▶ 發音</button>`;}
+  function visibleAbbrev(text) {
+    let out = String(text ?? '');
+    Object.entries(window.medicalAbbrev || {}).sort((a,b)=>b[0].length-a[0].length).forEach(([k,v])=>{
+      const zh = v.split('，').slice(1).join('，') || v;
+      const re = new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`, 'g');
+      out = out.replace(re, `${k}（${zh}）`);
+    });
+    return out;
+  }
+  window.visibleAbbrev = visibleAbbrev;
+
+  function relatedWordsHtml() {
+    return `<div class="section"><div class="section-head"><h2>更多相關醫學單字</h2><span class="tag">${moreWords.length}個・例句發音</span></div><div class="lecture-grid">${moreWords.map(w=>`<div class="lecture-card"><div class="section-head"><h3>${esc(w[0])}</h3>${speak(w[0])}</div><p><strong>中文：</strong>${esc(w[1])}</p><p><strong>拆字/記憶：</strong>${esc(w[2])}</p><p><strong>例句：</strong>${esc(w[3])}</p>${speak(w[3])}</div>`).join('')}</div></div>`;
+  }
+
+  const oldFull = window.fullMedicalEnglishHtml;
+  if (typeof oldFull === 'function') {
+    window.fullMedicalEnglishHtml = function(ch) {
+      let html = oldFull(ch);
+      html = html.replace('</div>', `${relatedWordsHtml()}</div>`);
+      html = html.replace(/<td>([^<]*\s[^<]*)<\/td><td>(<button[^>]*>▶ 發音<\/button>)<\/td>/g, (m, ex, btn) => `<td>${ex}<br>${speak(ex.replace(/^[^A-Za-z]*/, ''))}</td><td>${btn}</td>`);
+      return html;
+    };
+    const previous = chapterPage;
+    chapterPage = function(ch, i) {
+      if (i === 8) return window.fullMedicalEnglishHtml(ch);
+      return previous(ch, i);
+    };
+  }
+
+  function enhanceVisibleText(root) {
+    if (!root || root.dataset?.abbrExpanded === '1') return;
+    root.querySelectorAll('.flow-step span, .mindmap small, .lecture-card p, .compare-table td').forEach(el => {
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          const parent = node.parentElement;
+          if (!parent || ['SCRIPT', 'STYLE', 'TEXTAREA', 'BUTTON', 'ABBR'].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+          return node.nodeValue && node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(node => {
+        const next = visibleAbbrev(node.nodeValue);
+        if (next !== node.nodeValue) node.nodeValue = next;
+      });
+    });
+    if (root.dataset) root.dataset.abbrExpanded = '1';
+  }
+  window.enhanceVisibleAbbrevText = enhanceVisibleText;
+
+  const oldRenderDisease = renderDisease;
+  renderDisease = function(){ oldRenderDisease(); enhanceVisibleText(document.getElementById('disease')); };
+  const oldRenderLecture = renderLecture;
+  renderLecture = function(){ oldRenderLecture(); enhanceVisibleText(document.getElementById('lecture')); };
+  const oldRenderTasks = renderTasks;
+  renderTasks = function(){ oldRenderTasks(); enhanceVisibleText(document.getElementById('tasks')); };
+
+  renderLecture();
+  renderDisease();
+  renderTasks();
+})();
+
+
+</script>
+  <script>
+/* inlined: english-word-pronunciation.js */
+(function () {
+  const examples = [
+    ['hypertension','高血壓','hyper-高 + tension壓力','Hypertension increases cardiovascular risk.'],
+    ['hypoglycemia','低血糖','hypo-低 + glyc糖 + emia血液狀態','Hypoglycemia can cause sweating and confusion.'],
+    ['tachycardia','心搏過速','tachy-快 + cardia心','Tachycardia may be caused by fever or shock.'],
+    ['bradycardia','心搏過慢','brady-慢 + cardia心','Bradycardia can cause dizziness or syncope.'],
+    ['dyspnea','呼吸困難','dys-困難 + pnea呼吸','Dyspnea is a key symptom in heart failure.'],
+    ['apnea','無呼吸','a-無 + pnea呼吸','Apnea may occur during sleep.'],
+    ['antibiotic','抗生素','anti-對抗 + biotic生命','Antibiotics should match the infection source.'],
+    ['autoimmune','自體免疫','auto-自己 + immune免疫','Autoimmune disease can affect multiple organs.'],
+    ['endocarditis','心內膜炎','endo-內 + card心 + itis炎','Endocarditis can cause fever and a new murmur.'],
+    ['pericarditis','心包膜炎','peri-周圍 + card心 + itis炎','Pericarditis often causes sharp chest pain.'],
+    ['intravenous','靜脈內','intra-內 + venous靜脈','Intravenous fluids may be needed in shock.'],
+    ['extracellular','細胞外','extra-外 + cellular細胞','Potassium shifts between intracellular and extracellular spaces.'],
+    ['polyuria','多尿','poly-多 + uria尿','Polyuria is common in uncontrolled diabetes.'],
+    ['oliguria','少尿','oligo-少 + uria尿','Oliguria suggests decreased kidney perfusion.'],
+    ['pancytopenia','全血球低下','pan-全 + cyto細胞 + penia少','Pancytopenia suggests bone marrow failure.'],
+    ['cardiology','心臟學','cardi/o心 + logy學問','Cardiology focuses on heart and vascular disease.'],
+    ['angiography','血管攝影','angi/o血管 + graphy攝影','Coronary angiography can identify arterial blockage.'],
+    ['hematuria','血尿','hem/o血 + uria尿','Hematuria requires urinary tract evaluation.'],
+    ['pneumonia','肺炎','pneum/o肺 + ia狀態','Pneumonia can cause fever, cough, and hypoxemia.'],
+    ['bronchitis','支氣管炎','bronch/o支氣管 + itis炎','Bronchitis causes cough and airway inflammation.'],
+    ['alveolar','肺泡的','alveol/o肺泡 + ar形容詞','Alveolar disease impairs gas exchange.'],
+    ['nephritis','腎炎','nephr/o腎 + itis炎','Nephritis may cause hematuria and proteinuria.'],
+    ['urology','泌尿學','ur/o尿 + logy學問','Urology evaluates the urinary tract.'],
+    ['hepatitis','肝炎','hepat/o肝 + itis炎','Hepatitis raises AST and ALT.'],
+    ['cholestasis','膽汁鬱積','chol/e膽汁 + stasis停滯','Cholestasis can cause jaundice and itching.'],
+    ['gastritis','胃炎','gastr/o胃 + itis炎','Gastritis may cause epigastric pain.'],
+    ['enteritis','腸炎','enter/o腸 + itis炎','Enteritis often causes diarrhea.'],
+    ['neuropathy','神經病變','neur/o神經 + pathy病','Diabetic neuropathy causes numbness and pain.'],
+    ['encephalitis','腦炎','encephal/o腦 + itis炎','Encephalitis can cause fever and altered mental status.'],
+    ['hyperglycemia','高血糖','hyper-高 + glyc糖 + emia血液狀態','Hyperglycemia can lead to dehydration.'],
+    ['thyroiditis','甲狀腺炎','thyroid/o甲狀腺 + itis炎','Thyroiditis can alter thyroid hormone levels.'],
+    ['osteoporosis','骨質疏鬆','oste/o骨 + porosis多孔狀態','Osteoporosis increases fracture risk.'],
+    ['arthritis','關節炎','arthr/o關節 + itis炎','Arthritis causes joint pain and swelling.'],
+    ['dermatitis','皮膚炎','derm/o皮膚 + itis炎','Dermatitis causes itchy inflamed skin.'],
+    ['psychosis','精神病症狀','psych/o精神 + osis狀態','Psychosis requires safety assessment.'],
+    ['thrombosis','血栓形成','thromb/o血栓 + osis狀態','Deep vein thrombosis can cause leg swelling.'],
+    ['bacteremia','菌血症','bacter細菌 + emia血液狀態','Bacteremia may progress to sepsis.'],
+    ['proteinuria','蛋白尿','protein蛋白 + uria尿','Proteinuria suggests kidney damage.'],
+    ['hepatomegaly','肝腫大','hepato肝 + megaly腫大','Hepatomegaly can occur in liver disease.'],
+    ['leukopenia','白血球低下','leuko白 + penia減少','Leukopenia increases infection risk.'],
+    ['colonoscopy','大腸鏡','colon大腸 + scopy檢視','Colonoscopy can detect colorectal cancer.'],
+    ['electrocardiogram','心電圖','electro電 + cardio心 + gram紀錄','An electrocardiogram is essential in chest pain.']
+  ];
+
+  const groups = {
+    'hyper-': ['hypertension','hyperglycemia','hyperkalemia','hypernatremia','hyperthyroidism','hypercapnia','hyperlipidemia','hypercalcemia','hyperplasia','hyperreflexia'],
+    'hypo-': ['hypoglycemia','hypoxemia','hypotension','hypokalemia','hyponatremia','hypothyroidism','hypocalcemia','hypovolemia','hypothermia','hypoperfusion'],
+    'tachy-': ['tachycardia','tachypnea','tachyarrhythmia','supraventricular tachycardia','ventricular tachycardia','sinus tachycardia','tachyphylaxis','tachycardic','tachycardia-induced cardiomyopathy','tachypneic'],
+    'brady-': ['bradycardia','bradypnea','bradyarrhythmia','sinus bradycardia','bradykinesia','bradyphrenia','bradycardic','bradypneic','bradycardia syndrome','fetal bradycardia'],
+    'dys-': ['dyspnea','dysuria','dysphagia','dysarthria','dyspepsia','dysfunction','dysplasia','dyslipidemia','dysmenorrhea','dystonia'],
+    'a- / an-': ['apnea','anuria','anemia','aphasia','asystole','anaphylaxis','anorexia','anosmia','anovulation','aseptic'],
+    'anti-': ['antibiotic','antibody','anticoagulant','antiplatelet','antipyretic','antihistamine','antiemetic','antiviral','antifungal','antigen'],
+    'cardi/o': ['cardiology','cardiomyopathy','cardiomegaly','myocardium','myocarditis','pericarditis','endocarditis','electrocardiogram','cardiogenic shock','cardiopulmonary'],
+    'pneum/o': ['pneumonia','pneumothorax','pneumonitis','pneumonectomy','pneumococcal','pneumoconiosis','pneumoperitoneum','pneumomediastinum','pneumoniae','pneumology'],
+    'nephr/o': ['nephritis','nephrology','nephropathy','glomerulonephritis','nephrotic syndrome','nephrectomy','nephrolithiasis','hydronephrosis','pyelonephritis','nephrotoxicity'],
+    'hepat/o': ['hepatitis','hepatomegaly','hepatocyte','hepatotoxicity','hepatic encephalopathy','hepatocellular carcinoma','hepatology','heatorenal syndrome','hepatosplenomegaly','hepatobiliary'],
+    'neur/o': ['neurology','neuropathy','neuron','neurotransmitter','neurogenic shock','neurotoxicity','neurodegeneration','neuromuscular','neuroimaging','neurosurgery'],
+    '-itis': ['hepatitis','bronchitis','gastritis','enteritis','colitis','dermatitis','arthritis','meningitis','encephalitis','pancreatitis'],
+    '-emia': ['hypoxemia','bacteremia','septicemia','hyperglycemia','hypoglycemia','hyperkalemia','hyponatremia','anemia','uremia','leukemia'],
+    '-uria': ['polyuria','oliguria','anuria','hematuria','proteinuria','glycosuria','dysuria','nocturia','pyuria','bacteriuria'],
+    '-pathy': ['neuropathy','nephropathy','myopathy','cardiomyopathy','encephalopathy','retinopathy','vasculopathy','coagulopathy','gastropathy','osteopathy']
+  };
+
+  const zh = Object.fromEntries(examples.map(x => [x[0], x]));
+  function esc(s){return String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function speak(text,label='▶ 發音'){return `<button class="tiny-btn" onclick='speakMedicalEnglish(${JSON.stringify(text)})'>${label}</button>`;}
+  function explainWord(w) {
+    const row = zh[w] || [w, '相關醫學單字', '請用字首/字根/字尾拆解後放回臨床情境', `The term ${w} is used in medical context.`];
+    return row;
+  }
+  function tenExamplesFor(key) {
+    const list = groups[key] || examples.map(x => x[0]);
+    return list.slice(0, 10).map(explainWord);
+  }
+  function examplesTable(key) {
+    return `<div class="table-wrap"><table class="compare-table"><thead><tr><th>例字</th><th>中文</th><th>拆字/記憶</th><th>例句</th><th>音文發音</th></tr></thead><tbody>${tenExamplesFor(key).map(r=>`<tr><td><strong>${esc(r[0])}</strong><br>${speak(r[0],'▶ 單字')}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}<br>${speak(r[3],'▶ 例句')}</td><td>${speak(`${r[0]}. ${r[3]}`,'▶ 單字+例句')}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+
+  function upgradeEnglishCards(root) {
+    if (!root) return;
+    root.querySelectorAll('.lecture-card').forEach(card => {
+      const h3 = card.querySelector('h3');
+      if (!h3) return;
+      const key = h3.textContent.trim();
+      if (!groups[key] || card.dataset.wordExamples === '1') return;
+      card.dataset.wordExamples = '1';
+      const oldButtons = card.querySelectorAll('button');
+      oldButtons.forEach(btn => btn.remove());
+      card.insertAdjacentHTML('beforeend', `<h3>10個例字雙語發音</h3>${examplesTable(key)}`);
+    });
+  }
+  window.upgradeEnglishCards = upgradeEnglishCards;
+
+  const oldRenderEnglishMoreWords = renderEnglish;
+  renderEnglish = function () {
+    oldRenderEnglishMoreWords();
+    upgradeEnglishCards(document.getElementById('english'));
+  };
+  const oldRenderLectureMoreWords = renderLecture;
+  renderLecture = function () {
+    oldRenderLectureMoreWords();
+    upgradeEnglishCards(document.getElementById('lecture'));
+  };
+
+  renderEnglish();
+  renderLecture();
+})();
+
+</script>
+  <script>
+/* inlined: board-wrongbook.js */
+(function () {
+  const mistakeTypes = ['概念混淆','定位錯誤','機制斷裂','檢驗誤判','治療時機錯誤','禁忌忽略','危險徵象漏看','相似疾病混淆','藥物副作用漏掉','下一步處置錯誤'];
+  const leverageAxes = ['先定位再診斷','正常生理先畫出來','檢驗只服務機制','急症先排危險','藥物先看作用位置','比較相似疾病差異','時間軸決定鑑別','禁忌比藥名更重要','第一步處置優先','錯誤模型要重建'];
+
+  function pick(xs, i) { return xs[i % xs.length]; }
+  function diseaseFor(ch, i) {
+    const rows = diseases.filter(d => d.chapter === ch.id);
+    return rows[i % rows.length] || { name: pick(ch.diseases || [ch.system], i), mechanism: ch.causality.join(' → '), tests: '關鍵檢驗', treatment: '依病因治療', exam: pick(ch.exam, i) };
+  }
+  function drugFor(ch, i) {
+    const rows = drugs.filter(d => d.chapter === ch.id);
+    return rows[i % rows.length] || { name: pick(ch.drugs || ['依機制選藥'], i), mechanism: '依作用位置與機制選藥', trap: '注意禁忌與監測' };
+  }
+  function labFor(ch, i) {
+    const rows = (window.labs || []).filter(l => l.chapter === ch.id);
+    return rows[i % rows.length] || { name: '關鍵檢驗', meaning: '用來連結機制與下一步處置', high: '依臨床情境判讀', low: '依臨床情境判讀' };
+  }
+  function makeWrong(ch, i) {
+    const d = diseaseFor(ch, i);
+    const drug = drugFor(ch, i + 3);
+    const lab = labFor(ch, i + 5);
+    const mistake = pick(mistakeTypes, i);
+    const axis = pick(leverageAxes, i);
+    const concept = pick(ch.concepts || [ch.system], i);
+    return {
+      no: i + 1,
+      subject: ch.system,
+      title: `${mistake}｜${d.name}`,
+      question: `${ch.system}國考錯題：題幹出現 ${d.name} 相關線索，合併 ${lab.name} 異常時，最容易錯在哪一步？`,
+      wrongModel: `把題目當成關鍵字配對：看到 ${d.name} 就直接背答案，沒有先定位到 ${ch.location}，也沒有把 ${concept} 的正常功能畫出來。`,
+      correctModel: `正確模型是「${axis}」：先定位，再用 ${concept} 解釋 ${d.mechanism || ch.causality.join(' → ')}，最後才選檢查或治療。`,
+      whyWrong: `錯因通常是漏看時間軸、危險徵象、${lab.name} 的意義，或把 ${drug.name} 的用途與禁忌背成孤立藥名。`,
+      avoid: `下次看到此類題，固定寫出：位置 → 正常功能 → 失衡機制 → 症狀 → ${lab.name} → 診斷 → ${drug.name} 或處置。`,
+      relatedDisease: d.name,
+      relatedDrug: drug.name,
+      relatedLab: lab.name,
+      leverage: axis,
+      answer: `先抓 ${ch.location} 的 ${concept} 失衡，再判讀 ${lab.name}，最後依禁忌選 ${drug.name} 或其他處置。`,
+      chapter: ch.id
+    };
+  }
+
+  window.boardWrongBook = Object.fromEntries(chapters.map(ch => [ch.id, Array.from({ length: 100 }, (_, i) => makeWrong(ch, i))]));
+
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
+  function chips(activeId) {
+    return `<div class="chips">${chapters.map(c => `<button class="chip ${c.id===activeId?'active':''}" onclick="showWrongSubject('${c.id}')">${esc(c.system)}</button>`).join('')}</div>`;
+  }
+  function wrongCard(w) {
+    return `<div class="lecture-card wrongbook-card">
+      <div class="section-head"><h3>${w.no}. ${esc(w.title)}</h3><span class="tag">${esc(w.leverage)}</span></div>
+      <p><strong>題目：</strong>${esc(w.question)}</p>
+      <p><strong>答案：</strong>${esc(w.answer)}</p>
+      <div class="ordered-flow">
+        <div class="flow-step"><span class="step-num">1</span><span><strong>錯誤模型</strong><br>${esc(w.wrongModel)}</span></div>
+        <div class="flow-step"><span class="step-num">2</span><span><strong>正確模型</strong><br>${esc(w.correctModel)}</span></div>
+        <div class="flow-step"><span class="step-num">3</span><span><strong>為什麼錯</strong><br>${esc(w.whyWrong)}</span></div>
+        <div class="flow-step"><span class="step-num">4</span><span><strong>如何避免</strong><br>${esc(w.avoid)}</span></div>
+      </div>
+      <p><strong>相關疾病：</strong>${esc(w.relatedDisease)}　<strong>相關藥物：</strong>${esc(w.relatedDrug)}　<strong>相關檢驗：</strong>${esc(w.relatedLab)}</p>
+    </div>`;
+  }
+  window.showWrongSubject = function (id) {
+    const ch = chapters.find(c => c.id === id) || chapters[0];
+    const rows = window.boardWrongBook[ch.id];
+    document.getElementById('wrong').innerHTML = `
+      <div class="section"><div class="section-head"><h2>國考錯題本</h2><span class="tag">每科100個高槓桿錯題節點</span></div>${chips(ch.id)}</div>
+      <div class="section"><div class="section-head"><h2>${esc(ch.system)}｜100個最槓桿錯題解析</h2><span class="tag">錯誤模型 → 正確模型 → 避免方法</span></div><div class="lecture-grid">${rows.map(wrongCard).join('')}</div></div>`;
+    navTo('wrong');
+    if (window.annotateMedicalAbbrev) annotateMedicalAbbrev(document.getElementById('wrong'));
+    if (window.enhanceVisibleAbbrevText) enhanceVisibleAbbrevText(document.getElementById('wrong'));
+  };
+
+  renderWrong = function () {
+    showWrongSubject(activeChapter || chapters[0].id);
+  };
+
+  function renameNav() {
+    const btn = document.querySelector('.nav-btn[data-view="wrong"] span');
+    if (btn) btn.textContent = '國考錯題本';
+  }
+  const oldRenderNavWrong = renderNav;
+  renderNav = function () {
+    oldRenderNavWrong();
+    renameNav();
+  };
+
+  const oldHomeDescWrong = homeDesc;
+  homeDesc = function (id) {
+    if (id === 'wrong') return '每科100個最槓桿錯題節點，直接重建錯誤模型。';
+    return oldHomeDescWrong(id);
+  };
+
+  const oldDailyWrong = dailyContent;
+  dailyContent = function (ch = chapters.find(c => c.id === activeChapter)) {
+    const rows = (window.boardWrongBook[ch.id] || []).slice(0, 20);
+    return `${oldDailyWrong(ch)}<div class="section"><div class="section-head"><h2>${esc(ch.system)}｜高槓桿錯題節點</h2><span class="tag">精選20題</span></div><div class="lecture-grid">${rows.map(wrongCard).join('')}</div></div>`;
+  };
+
+  const style = document.createElement('style');
+  style.textContent = '.wrongbook-card{display:grid;gap:10px}.wrongbook-card .ordered-flow{margin-top:0}';
+  document.head.appendChild(style);
+
+  renameNav();
+  renderWrong();
+  renderHome();
+})();
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
